@@ -12,5 +12,5 @@ export function photoFigure(photo: Photo): HTMLElement {
     'aria-label': photo.alt,
     style: `aspect-ratio:${photo.width}/${photo.height};--tone:${photo.tone ?? 0}`,
   });
-  return h('figure', { class: 'photo', 'data-roll': photo.roll, 'data-photo': photo.id }, frame);
+  return h('figure', { class: 'photo', 'data-reveal': true, 'data-roll': photo.roll, 'data-photo': photo.id }, frame);
 }

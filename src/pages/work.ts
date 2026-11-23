@@ -22,13 +22,13 @@ export function workPage({ url }: RouteContext): HTMLElement {
 
   return h(
     'section',
-    { class: 'page work' },
+    { class: 'page work', 'data-title': active ? active.title : 'Work' },
     h(
       'header',
       { class: 'page-head' },
-      h('p', { class: 'eyebrow' }, active ? `Roll · ${active.title}` : 'The archive'),
-      h('h1', { class: 'display' }, active ? active.title : 'Work'),
-      h('p', { class: 'lede' }, active ? active.blurb : 'Five rolls from the datworks archive.'),
+      h('p', { class: 'eyebrow', 'data-reveal': true }, active ? `Roll · ${active.title}` : 'The archive'),
+      h('h1', { class: 'display', 'data-reveal': true }, active ? active.title : 'Work'),
+      h('p', { class: 'lede', 'data-reveal': true }, active ? active.blurb : 'Five rolls from the datworks archive.'),
       filters,
     ),
     h(

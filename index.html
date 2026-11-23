@@ -15,13 +15,12 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header">
+    <header class="site-header" id="site-header">
       <a class="brand" href="/" data-link>datworks<span class="brand-dot">.</span></a>
-      <nav aria-label="Main">
-        <a href="/work" data-link>Work</a>
-      </nav>
     </header>
     <main id="main" tabindex="-1"></main>
+    <div class="curtain" id="curtain" aria-hidden="true"><span class="mono">Developing…</span></div>
+    <div class="grain" aria-hidden="true"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
