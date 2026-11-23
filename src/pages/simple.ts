@@ -1,17 +1,5 @@
 import { h } from '../ui/dom';
 
-/** Temporary home until ticket 05 builds the showreel and preloader. */
-export function homePage(): HTMLElement {
-  return h(
-    'section',
-    { class: 'page home-stub' },
-    h('p', { class: 'eyebrow', 'data-reveal': true }, 'datworks · The King of All Trades'),
-    h('h1', { class: 'display', 'data-reveal': true }, 'Darkroom'),
-    h('p', { class: 'lede', 'data-reveal': true }, 'Pre-wedding, graduation, event and product photography from West Java.'),
-    h('a', { href: '/work', 'data-link': true, class: 'cta' }, 'Enter the archive →'),
-  );
-}
-
 export function notFoundPage(): HTMLElement {
   return h(
     'section',

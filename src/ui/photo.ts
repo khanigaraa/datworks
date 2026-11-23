@@ -16,11 +16,16 @@ export const frameLabel = (n: number, total: number) => `Frame ${pad(n)}/${pad(t
  * The picture itself. Until the image pipeline (ticket 02) exists, this is a toned
  * placeholder with the real aspect ratio and alt text, so layouts don't shift later.
  */
-export function photoFrame(photo: Photo, ratio = `${photo.width}/${photo.height}`): HTMLElement {
+export function photoFrame(
+  photo: Photo,
+  ratio = `${photo.width}/${photo.height}`,
+  { decorative = false } = {},
+): HTMLElement {
   return h('div', {
     class: 'photo-frame',
-    role: 'img',
-    'aria-label': photo.alt,
+    role: decorative ? undefined : 'img',
+    'aria-label': decorative ? undefined : photo.alt,
+    'aria-hidden': decorative ? 'true' : undefined,
     style: `aspect-ratio:${ratio};--tone:${photo.tone ?? 0}`,
   });
 }

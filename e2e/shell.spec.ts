@@ -43,7 +43,7 @@ test('menu lists all six series and closes with Escape', async ({ page }) => {
 test('opens a series from the menu; unknown series show the 404', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Index' }).click();
-  await page.getByRole('link', { name: /Dara Grad/ }).click();
+  await page.getByRole('dialog', { name: 'Site index' }).getByRole('link', { name: /Dara Grad/ }).click();
   await expect(page).toHaveURL(/\/series\/dara-grad$/);
   await expect(h1(page)).toHaveText('Dara Grad');
 

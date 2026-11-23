@@ -14,6 +14,12 @@ export default defineConfig({
     channel: 'msedge',
     headless: true,
     trace: 'retain-on-failure',
+    // Tests start as returning visitors, so the "developing" intro plays its short version.
+    // e2e/home.spec.ts clears this to test the first visit.
+    storageState: {
+      cookies: [],
+      origins: [{ origin: 'http://localhost:5181', localStorage: [{ name: 'datworks:developed', value: '1' }] }],
+    },
   },
   webServer: {
     command: 'npm run build && npx vite preview --port 5181 --strictPort',

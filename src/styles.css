@@ -641,6 +641,193 @@ main:focus {
   font-style: italic;
 }
 
+/* Preloader */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: var(--ink);
+  clip-path: inset(0 0 0 0);
+  cursor: pointer;
+}
+.pre-inner {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}
+.pre-print {
+  height: min(62vh, 560px);
+  max-width: calc(100vw - 2 * var(--gutter));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 0 80px rgba(224, 50, 43, 0.18);
+}
+.pre-print canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* No WebGL: the same negative → positive idea with a CSS filter. */
+.pre-print-css {
+  --developed: 0;
+  background:
+    radial-gradient(120% 90% at 30% 20%, hsl(var(--tone) 30% 22% / 0.9), transparent 60%),
+    linear-gradient(160deg, hsl(var(--tone) 18% 14%), hsl(var(--tone) 12% 7%));
+  filter: invert(calc(1 - var(--developed))) sepia(calc((1 - var(--developed)) * 0.8));
+}
+.pre-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+.pre-status {
+  color: var(--safelight);
+}
+.pre-skip {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--paper);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Home */
+.hero {
+  min-height: calc(100svh - 70px);
+  display: grid;
+  align-content: end;
+  gap: 8px;
+}
+.hero-title {
+  margin: 0;
+  font: 400 clamp(88px, 23vw, 360px) / 0.8 var(--serif);
+  letter-spacing: -0.04em;
+}
+.hero-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px 48px;
+  margin-top: 16px;
+}
+.hero-tagline {
+  margin: 0;
+  font: 400 clamp(28px, 4vw, 56px) / 1 var(--serif);
+}
+.hero-tagline em {
+  color: var(--safelight);
+}
+.hero .lede {
+  margin: 0;
+}
+.scroll-cue {
+  margin-top: 40px;
+}
+
+.reel {
+  padding: 40px var(--gutter) clamp(80px, 12vw, 200px);
+}
+.reel-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(24px, 5vw, 64px) clamp(16px, 2vw, 32px);
+  align-items: start;
+}
+.reel-item {
+  grid-column: var(--col);
+  margin-top: var(--offset);
+}
+.reel-item .photo {
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .reel-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reel-item {
+    grid-column: auto;
+    margin-top: 0;
+  }
+  .reel-item:nth-child(even) {
+    margin-left: 18%;
+  }
+}
+
+.section-title {
+  margin: 8px 0 32px;
+  font: 400 clamp(48px, 9vw, 128px) / 0.95 var(--serif);
+  letter-spacing: -0.02em;
+}
+.roll-list,
+.series-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.roll-link {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 0.9fr) minmax(0, 1.2fr) auto;
+  align-items: baseline;
+  gap: 16px 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+}
+.roll-title {
+  font: 400 clamp(36px, 5vw, 72px) / 1 var(--serif);
+  transition: color 0.25s, transform 0.35s;
+}
+.roll-blurb {
+  color: var(--muted);
+}
+.roll-link:hover .roll-title {
+  color: var(--safelight);
+  transform: translateX(10px);
+}
+@media (max-width: 760px) {
+  .roll-link {
+    grid-template-columns: 2.5em minmax(0, 1fr) auto;
+  }
+  .roll-blurb {
+    display: none;
+  }
+}
+
+.series-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 40px 24px;
+  margin-bottom: 32px;
+}
+.series-card {
+  display: grid;
+  gap: 10px;
+  text-decoration: none;
+}
+.series-card-cover {
+  overflow: hidden;
+}
+.series-card-cover .photo-frame {
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.35s;
+}
+.series-card:hover .photo-frame {
+  transform: scale(1.04);
+  filter: brightness(1.25);
+}
+.series-card-title {
+  font: 400 clamp(26px, 2.6vw, 36px) / 1.05 var(--serif);
+}
+.series-card:hover .series-card-title {
+  color: var(--safelight);
+}
+
 /* About */
 .about-body {
   display: grid;
