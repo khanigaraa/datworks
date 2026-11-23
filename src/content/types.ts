@@ -47,6 +47,8 @@ export interface Series {
   cover: string;
   /** Chapter order for the `chapters` layout, or product groups for `catalog`. */
   chapters?: string[];
+  /** One short opening line per chapter, keyed by chapter name. */
+  chapterNotes?: Record<string, string>;
 }
 
 export interface ContentData {

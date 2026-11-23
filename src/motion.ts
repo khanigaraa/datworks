@@ -8,6 +8,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+let activeLenis: Lenis | null = null;
+
+/** Scroll an element into view (respecting its CSS scroll-margin), through Lenis when it's running. */
+export function scrollToElement(el: HTMLElement) {
+  if (activeLenis) activeLenis.scrollTo(el, { force: true });
+  else el.scrollIntoView();
+}
+
 /**
  * Motion layer: smooth scroll (Lenis), page transitions (a "safelight" curtain) and
  * scroll reveals. Every animation a page creates lives in one gsap.context that is
@@ -22,6 +30,7 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
 
   if (!reduce) {
     lenis = new Lenis({ autoRaf: false });
+    activeLenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis?.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);

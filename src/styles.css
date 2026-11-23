@@ -9,6 +9,7 @@
   --sans: 'Inter', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --gutter: clamp(16px, 4vw, 48px);
+  --header-h: 72px;
   color-scheme: dark;
 }
 
@@ -75,7 +76,8 @@ main:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px var(--gutter);
+  height: var(--header-h);
+  padding: 0 var(--gutter);
   border-bottom: 1px solid var(--line);
   background: rgba(11, 10, 10, 0.82);
   backdrop-filter: blur(10px);
@@ -613,6 +615,73 @@ main:focus {
 }
 .catalog-grid .photo {
   margin: 0;
+}
+
+/* Chapters: the page background drifts to each chapter's tone. */
+.series-chapters {
+  --chapter-tone: 350;
+  background-color: hsl(var(--chapter-tone) 28% 7%);
+  transition: background-color 1.2s ease;
+}
+.chapter-nav {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 10;
+  margin: 0 calc(-1 * var(--gutter)) clamp(40px, 6vw, 80px);
+  padding: 12px var(--gutter);
+  border-bottom: 1px solid var(--line);
+  background: hsl(var(--chapter-tone) 28% 7% / 0.85);
+  backdrop-filter: blur(10px);
+  transition: background-color 1.2s ease;
+}
+.chapter-nav ol {
+  display: flex;
+  gap: 8px clamp(16px, 4vw, 48px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chapter-nav a {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 0;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s, border-color 0.3s;
+}
+.chapter-nav a:hover {
+  color: var(--paper);
+}
+.chapter-nav a[aria-current='true'] {
+  color: var(--paper);
+  border-color: var(--safelight);
+}
+.chapter-nav a[aria-current='true'] .mono {
+  color: var(--safelight);
+}
+.chapter {
+  padding-bottom: clamp(80px, 12vw, 180px);
+  scroll-margin-top: calc(var(--header-h) + 64px);
+}
+.chapter:focus {
+  outline: none;
+}
+.chapter-head {
+  margin-bottom: clamp(40px, 6vw, 80px);
+}
+.chapter-title {
+  margin: 8px 0 12px;
+  font: italic 400 clamp(56px, 11vw, 160px) / 0.9 var(--serif);
+  letter-spacing: -0.02em;
 }
 
 .series-next {

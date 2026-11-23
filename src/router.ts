@@ -1,3 +1,5 @@
+import { teardown } from './ui/dom';
+
 export interface RouteContext {
   url: URL;
   params: Record<string, string>;
@@ -38,7 +40,9 @@ const SITE_TITLE = 'datworks: Darkroom';
 export function createRouter(outlet: HTMLElement, notFound: Page, hooks: RouterHooks = {}) {
   const routes: Route[] = [];
   let renderedPath: string | null = null;
+  let renderedKey: string | null = null;
   let seq = 0;
+  let done = 0;
 
   function add(path: string, page: Page) {
     const keys: string[] = [];
@@ -61,6 +65,9 @@ export function createRouter(outlet: HTMLElement, notFound: Page, hooks: RouterH
   }
 
   async function render() {
+    // In-page anchors (#chapter-…, the skip link) fire popstate too: same page, nothing to do.
+    // Unless another render is still in flight, in which case this one must win.
+    if (location.pathname + location.search === renderedKey && done === seq) return;
     const token = ++seq;
     const pathChanged = renderedPath !== null && renderedPath !== location.pathname;
 
@@ -73,6 +80,7 @@ export function createRouter(outlet: HTMLElement, notFound: Page, hooks: RouterH
     const el = page({ url, params, navigate });
 
     hooks.unmount?.();
+    if (outlet.firstElementChild) teardown(outlet.firstElementChild);
     outlet.replaceChildren(el);
     document.title = el.dataset.title ? `${el.dataset.title} · datworks` : SITE_TITLE;
 
@@ -82,6 +90,8 @@ export function createRouter(outlet: HTMLElement, notFound: Page, hooks: RouterH
       outlet.focus({ preventScroll: true });
     }
     renderedPath = url.pathname;
+    renderedKey = url.pathname + url.search;
+    done = token;
     hooks.enter?.(el, { url, transition: pathChanged });
   }
 

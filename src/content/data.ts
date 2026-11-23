@@ -37,6 +37,12 @@ export const series: Series[] = [
     intro: 'One couple, four sessions: from the engagement to the studio, told in order.',
     cover: 'love-story-01',
     chapters: ['Engagement', 'Pre-wedding', 'Wedding', 'Studio'],
+    chapterNotes: {
+      Engagement: 'Two families in one room, and a ring that made it official.',
+      'Pre-wedding': 'Golden hour, borrowed time: the two of them before the big day.',
+      Wedding: 'The vows, the noise, the long table, the first dance.',
+      Studio: 'After it all, against a plain blue backdrop: just A & D.',
+    },
   },
   {
     slug: 'dara-grad',

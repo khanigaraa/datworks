@@ -1,6 +1,7 @@
 import { catalog, type Photo, type Series, type SeriesLayout } from '../content';
 import type { RouteContext } from '../router';
-import { h } from '../ui/dom';
+import { scrollToElement } from '../motion';
+import { h, onTeardown } from '../ui/dom';
 import { editorialRows } from '../ui/editorial';
 import { photoFigure } from '../ui/photo';
 import { notFoundPage } from './simple';
@@ -40,15 +41,99 @@ const catalogLayout: Layout = (s, photos, frame) => {
   );
 };
 
+const pad = (n: number) => String(n).padStart(2, '0');
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+/** Background hue per chapter: blush, gold, candlelight, studio blue. */
+const CHAPTER_TONES = [350, 32, 45, 215];
+
+/**
+ * A story in chapters: a sticky chapter index that follows the reader, and a background
+ * that shifts tone from one chapter to the next (the colour transition is CSS, so
+ * reduced motion turns it off).
+ */
+const chaptersLayout: Layout = (s, photos, frame) => {
+  const groups = catalog
+    .seriesChapters(s.slug)
+    .map((g) => ({ ...g, photos: g.photos.filter((p) => photos.includes(p)) }));
+
+  const links = groups.map((g, i) =>
+    h(
+      'a',
+      { href: `#chapter-${slugify(g.chapter)}`, 'data-chapter': g.chapter },
+      h('span', { class: 'mono' }, pad(i + 1)),
+      h('span', { class: 'chapter-link-name' }, g.chapter),
+    ),
+  );
+
+  const sections = groups.map((g, i) => {
+    const id = `chapter-${slugify(g.chapter)}`;
+    const note = s.chapterNotes?.[g.chapter];
+    return h(
+      'section',
+      {
+        class: 'chapter',
+        id,
+        'data-chapter': g.chapter,
+        'data-tone': CHAPTER_TONES[i % CHAPTER_TONES.length],
+        'aria-labelledby': `${id}-title`,
+        tabindex: -1,
+      },
+      h(
+        'header',
+        { class: 'chapter-head' },
+        h('p', { class: 'eyebrow', 'data-reveal': true }, `Chapter ${pad(i + 1)} / ${pad(groups.length)}`),
+        h('h2', { class: 'chapter-title', id: `${id}-title`, 'data-reveal': true }, g.chapter),
+        note && h('p', { class: 'lede', 'data-reveal': true }, note),
+      ),
+      editorial(s, g.photos, frame),
+    );
+  });
+
+  const nav = h('nav', { class: 'chapter-nav', 'aria-label': 'Chapters' }, h('ol', {}, ...links.map((a) => h('li', {}, a))));
+  const root = h('div', { class: 'layout-chapters' }, nav, ...sections);
+
+  function setActive(section: HTMLElement) {
+    for (const a of links) {
+      if (a.dataset.chapter === section.dataset.chapter) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    }
+    root.dataset.active = section.dataset.chapter;
+    root.closest<HTMLElement>('.series')?.style.setProperty('--chapter-tone', section.dataset.tone ?? '0');
+  }
+
+  // A chapter is "active" while it crosses the middle band of the viewport.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) if (e.isIntersecting) setActive(e.target as HTMLElement);
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  sections.forEach((sec) => observer.observe(sec));
+  onTeardown(root, () => observer.disconnect());
+  if (sections[0]) setActive(sections[0]);
+
+  // Jump with the smooth scroller instead of a hash change, then move focus for keyboard users.
+  nav.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('a[data-chapter]');
+    if (!a) return;
+    e.preventDefault();
+    const target = sections.find((sec) => sec.dataset.chapter === a.dataset.chapter)!;
+    scrollToElement(target);
+    target.focus({ preventScroll: true });
+  });
+
+  return root;
+};
+
 /**
  * One renderer per layout. Layouts that don't have their own ticket done yet
- * (horizontal: 07, chapters: 08, blur: 09) fall back to editorial.
+ * (horizontal: 07, blur: 09) fall back to editorial.
  */
 const LAYOUTS: Record<SeriesLayout, Layout> = {
   editorial,
   catalog: catalogLayout,
   horizontal: editorial,
-  chapters: editorial,
+  chapters: chaptersLayout,
   blur: editorial,
 };
 

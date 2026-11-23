@@ -43,6 +43,17 @@ describe('queries', () => {
     expect(groups.flatMap((g) => g.photos)).toHaveLength(catalog.seriesPhotos('still-life').length);
   });
 
+  it('gives every love-story chapter an opening note', () => {
+    const s = catalog.getSeries('love-story')!;
+    expect(Object.keys(s.chapterNotes ?? {})).toEqual(s.chapters);
+  });
+
+  it('keeps photos in curated order within chapters', () => {
+    const chapters = catalog.seriesChapters('love-story');
+    const flat = chapters.flatMap((c) => c.photos.map((p) => p.id));
+    expect(flat).toEqual(catalog.seriesPhotos('love-story').map((p) => p.id));
+  });
+
   it('groups chapter photos in chapter order', () => {
     const chapters = catalog.seriesChapters('love-story');
     expect(chapters.map((c) => c.chapter)).toEqual(['Engagement', 'Pre-wedding', 'Wedding', 'Studio']);
@@ -94,6 +105,15 @@ describe('validation errors', () => {
 
   it('rejects duplicate ids', () => {
     expect(problems((d) => d.photos.push({ ...d.photos[0] }))).toMatch(/Duplicate photo id "aquatics-01"/);
+  });
+
+  it('rejects a chapter note for a chapter that does not exist', () => {
+    expect(
+      problems((d) => {
+        const s = d.series.find((x) => x.slug === 'love-story')!;
+        s.chapterNotes = { ...s.chapterNotes, Honeymoon: 'Not a chapter.' };
+      }),
+    ).toMatch(/note for unknown chapter "Honeymoon"/);
   });
 
   it('rejects empty alt text', () => {

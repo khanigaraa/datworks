@@ -85,6 +85,8 @@ function validate(data: ContentData, visible: Photo[], catalog: Catalog): string
     if (s.layout === 'chapters' && !s.chapters?.length)
       errors.push(`Series "${s.slug}" uses chapters but defines none`);
     if (s.chapters?.length) {
+      for (const name of Object.keys(s.chapterNotes ?? {}))
+        if (!s.chapters.includes(name)) errors.push(`Series "${s.slug}" has a note for unknown chapter "${name}"`);
       for (const p of catalog.seriesPhotos(s.slug))
         if (!p.chapter || !s.chapters?.includes(p.chapter))
           errors.push(`Photo "${p.id}" has no valid chapter for series "${s.slug}"`);
