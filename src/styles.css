@@ -617,6 +617,102 @@ main:focus {
   margin: 0;
 }
 
+/* Horizontal strip (West Java Aquatics). Base = phones: native swipe with snap. */
+.layout-horizontal {
+  margin: 0 calc(-1 * var(--gutter));
+}
+.h-track {
+  display: flex;
+  gap: clamp(16px, 3vw, 40px);
+  padding: 8px var(--gutter) 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.h-item,
+.h-card {
+  flex: none;
+  scroll-snap-align: start;
+}
+.h-item {
+  width: auto;
+}
+.h-item .photo {
+  margin: 0;
+}
+.h-item .photo-frame {
+  width: auto;
+  height: min(62svh, 520px);
+}
+.h-card {
+  display: grid;
+  align-content: end;
+  width: min(72vw, 320px);
+  padding: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, hsl(200 40% 12%), var(--ink));
+}
+.h-card p {
+  margin: 0;
+}
+.h-card-title {
+  margin-top: 8px !important;
+  font: 400 clamp(28px, 3vw, 44px) / 1.05 var(--serif);
+}
+.h-hint {
+  margin-top: 16px !important;
+  color: var(--safelight);
+}
+
+/* Desktop: motion.ts pins the section; the track is moved with transforms, not scrolled. */
+.layout-horizontal.is-pinned {
+  height: calc(100vh - var(--header-h));
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.is-pinned .h-track {
+  overflow: visible;
+  scroll-snap-type: none;
+  padding-block: 0;
+  will-change: transform;
+}
+.is-pinned .h-item .photo-frame {
+  height: calc(100vh - var(--header-h) - 120px);
+}
+
+/* WebGL water: one canvas over the viewport; the DOM frames underneath stay for layout and clicks. */
+.ripple-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.ripple-active .photo-frame {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout-horizontal {
+    margin: 0;
+  }
+  .h-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    overflow: visible;
+    padding: 0;
+  }
+  .h-card {
+    width: auto;
+  }
+  .h-item .photo-frame {
+    width: 100%;
+    height: auto;
+  }
+}
+
 /* Chapters: the page background drifts to each chapter's tone. */
 .series-chapters {
   --chapter-tone: 350;

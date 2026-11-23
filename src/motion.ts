@@ -2,7 +2,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
+import { canRipple, createRipple } from './ripple';
 import type { RouterHooks } from './router';
+import { onTeardown } from './ui/dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,7 +65,34 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
         },
       );
     }
+    for (const section of root.querySelectorAll<HTMLElement>('[data-horizontal]')) pinHorizontal(section);
     ScrollTrigger.refresh();
+  }
+
+  /** Desktop only: pin the strip and let vertical scroll move it sideways (+ water ripple). */
+  function pinHorizontal(section: HTMLElement) {
+    if (!matchMedia('(min-width: 900px) and (hover: hover) and (pointer: fine)').matches) return;
+    const track = section.querySelector<HTMLElement>('.h-track');
+    if (!track) return;
+    section.classList.add('is-pinned');
+    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+    const distance = () => Math.max(0, track.scrollWidth - section.clientWidth);
+    const tween = gsap.to(track, {
+      x: () => -distance(),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: `top ${header}px`,
+        end: () => `+=${distance()}`,
+        pin: true,
+        scrub: 0.8,
+        invalidateOnRefresh: true,
+      },
+    });
+    if (canRipple()) {
+      const stop = createRipple(section, () => tween.scrollTrigger?.getVelocity() ?? 0);
+      onTeardown(section, stop);
+    }
   }
 
   const hooks: Required<RouterHooks> = {

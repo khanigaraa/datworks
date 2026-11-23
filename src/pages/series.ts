@@ -126,13 +126,42 @@ const chaptersLayout: Layout = (s, photos, frame) => {
 };
 
 /**
+ * A pool-length strip of frames. Desktop: the section pins and vertical scrolling drives
+ * the strip sideways (wired up in motion.ts via `data-horizontal`), with a water-ripple
+ * shader on top. Phones: native swipe with snap points. Reduced motion: a plain grid.
+ */
+const horizontal: Layout = (s, photos, frame) =>
+  h(
+    'section',
+    { class: 'layout-horizontal', 'data-horizontal': true, 'aria-label': `${s.title}, frames` },
+    h(
+      'div',
+      { class: 'h-track' },
+      h(
+        'div',
+        { class: 'h-card' },
+        h('p', { class: 'mono' }, `Lanes 01–${pad(photos.length)}`),
+        h('p', { class: 'h-card-title' }, 'Keep scrolling to swim across.'),
+        h('p', { class: 'mono h-hint', 'aria-hidden': 'true' }, 'Scroll ↓ · Swipe →'),
+      ),
+      ...photos.map((p) => h('div', { class: 'h-item' }, frame(p))),
+      h(
+        'div',
+        { class: 'h-card' },
+        h('p', { class: 'mono' }, 'Finish'),
+        h('p', { class: 'h-card-title' }, `${photos.length} frames, ${s.year}.`),
+      ),
+    ),
+  );
+
+/**
  * One renderer per layout. Layouts that don't have their own ticket done yet
- * (horizontal: 07, blur: 09) fall back to editorial.
+ * (blur: 09) fall back to editorial.
  */
 const LAYOUTS: Record<SeriesLayout, Layout> = {
   editorial,
   catalog: catalogLayout,
-  horizontal: editorial,
+  horizontal,
   chapters: chaptersLayout,
   blur: editorial,
 };
