@@ -5,6 +5,7 @@ import 'lenis/dist/lenis.css';
 import { canRipple, createRipple } from './ripple';
 import type { RouterHooks } from './router';
 import { onTeardown } from './ui/dom';
+import { skewToBlur, velocityToSkew } from './ui/velocity';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -66,7 +67,32 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
       );
     }
     for (const section of root.querySelectorAll<HTMLElement>('[data-horizontal]')) pinHorizontal(section);
+    for (const el of root.querySelectorAll<HTMLElement>('[data-velocity-fx]')) velocityFx(el);
     ScrollTrigger.refresh();
+  }
+
+  /**
+   * Motion blur: scroll speed sets `--skew` / `--blur` on the element (CSS applies them),
+   * then they ease back to zero so photos snap sharp again when you stop.
+   */
+  function velocityFx(el: HTMLElement) {
+    const fx = { skew: 0 };
+    const apply = () => {
+      el.style.setProperty('--skew', fx.skew.toFixed(2));
+      el.style.setProperty('--blur', skewToBlur(fx.skew).toFixed(2));
+    };
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate(self) {
+        const skew = velocityToSkew(self.getVelocity());
+        if (Math.abs(skew) <= Math.abs(fx.skew)) return;
+        fx.skew = skew;
+        apply();
+        gsap.to(fx, { skew: 0, duration: 0.8, ease: 'power3.out', overwrite: true, onUpdate: apply });
+      },
+    });
   }
 
   /** Desktop only: pin the strip and let vertical scroll move it sideways (+ water ripple). */

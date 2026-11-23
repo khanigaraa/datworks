@@ -155,15 +155,25 @@ const horizontal: Layout = (s, photos, frame) =>
   );
 
 /**
- * One renderer per layout. Layouts that don't have their own ticket done yet
- * (blur: 09) fall back to editorial.
+ * Pencak silat in motion: a staggered two-column sequence. Scroll speed leans and blurs
+ * the frames (motion.ts, `data-velocity-fx`); they sharpen as soon as you stop.
+ */
+const blur: Layout = (_s, photos, frame) =>
+  h(
+    'div',
+    { class: 'layout-blur', 'data-velocity-fx': true },
+    ...photos.map((p, i) => h('div', { class: `blur-item blur-item-${i % 2 ? 'right' : 'left'}` }, frame(p))),
+  );
+
+/**
+ * One renderer per layout.
  */
 const LAYOUTS: Record<SeriesLayout, Layout> = {
   editorial,
   catalog: catalogLayout,
   horizontal,
   chapters: chaptersLayout,
-  blur: editorial,
+  blur,
 };
 
 /** /series/:slug: one template for every series; the body layout comes from the data. */

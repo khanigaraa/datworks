@@ -32,14 +32,20 @@ test.describe('first visit', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test('plays the developing intro, which can be skipped', async ({ page }) => {
+    // Freeze time so the intro can't finish on its own before we press Skip (slow CI machines).
+    await page.clock.install({ time: new Date('2026-11-23T10:00:00') });
+    await page.clock.pauseAt(new Date('2026-11-23T10:00:01'));
     await page.goto('/');
+    await page.clock.runFor(500);
     const preloader = page.locator('.preloader');
     await expect(preloader).toBeVisible();
     await expect(preloader.locator('canvas')).toHaveCount(1);
     await expect(page.locator('.pre-status')).toContainText('Developing');
 
     await page.getByRole('button', { name: 'Skip intro' }).click();
+    await page.clock.runFor(2000);
     await expect(preloader).toHaveCount(0, { timeout: 2000 });
+    await page.clock.resume();
     await expect(page.getByRole('heading', { level: 1 })).toHaveCSS('opacity', '1');
 
     // Remembered: the next visit gets the short version.

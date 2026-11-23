@@ -713,6 +713,41 @@ main:focus {
   }
 }
 
+/* Blur (Silat): frames lean and smear with scroll speed, driven by --skew / --blur. */
+.layout-blur {
+  --skew: 0;
+  --blur: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(32px, 6vw, 96px) clamp(16px, 4vw, 64px);
+}
+.blur-item .photo {
+  margin: 0;
+}
+.blur-item-right {
+  margin-top: clamp(64px, 14vw, 220px);
+}
+.layout-blur .photo-frame {
+  transform: skewY(calc(var(--skew) * 1deg));
+  filter: blur(calc(var(--blur) * 1px));
+  will-change: transform, filter;
+}
+/* Phones: skew is cheap, blur is not. */
+@media (pointer: coarse), (max-width: 640px) {
+  .layout-blur .photo-frame {
+    filter: none;
+    will-change: transform;
+  }
+}
+@media (max-width: 640px) {
+  .layout-blur {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .blur-item-right {
+    margin: 0 0 0 18%;
+  }
+}
+
 /* Chapters: the page background drifts to each chapter's tone. */
 .series-chapters {
   --chapter-tone: 350;
