@@ -9,7 +9,7 @@ export interface Catalog {
   getSeries(slug: string): Series | undefined;
   /** Photos of a series in curated order. */
   seriesPhotos(slug: string): Photo[];
-  /** Photos of a `chapters` series grouped in chapter order. */
+  /** Photos of a series with `chapters` (story chapters or catalog groups), in chapter order. */
   seriesChapters(slug: string): { chapter: string; photos: Photo[] }[];
   /** The series after `slug`, wrapping around to the first one. */
   nextSeries(slug: string): Series | undefined;
@@ -82,8 +82,9 @@ function validate(data: ContentData, visible: Photo[], catalog: Catalog): string
       errors.push(
         `Series "${s.slug}" has ${count} photos (allowed ${LIMITS.perSeries.min}–${LIMITS.perSeries.max})`,
       );
-    if (s.layout === 'chapters') {
-      if (!s.chapters?.length) errors.push(`Series "${s.slug}" uses chapters but defines none`);
+    if (s.layout === 'chapters' && !s.chapters?.length)
+      errors.push(`Series "${s.slug}" uses chapters but defines none`);
+    if (s.chapters?.length) {
       for (const p of catalog.seriesPhotos(s.slug))
         if (!p.chapter || !s.chapters?.includes(p.chapter))
           errors.push(`Photo "${p.id}" has no valid chapter for series "${s.slug}"`);

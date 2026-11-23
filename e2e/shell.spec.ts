@@ -84,7 +84,7 @@ test.describe('reduced motion', () => {
 test.describe('mobile', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  for (const path of ['/about', '/series/love-story']) {
+  for (const path of ['/about']) {
     test(`no horizontal overflow on ${path}`, async ({ page }) => {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

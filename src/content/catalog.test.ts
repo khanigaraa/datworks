@@ -37,6 +37,12 @@ describe('queries', () => {
     expect(ids).toEqual([...ids].sort());
   });
 
+  it('groups the still-life catalog by product', () => {
+    const groups = catalog.seriesChapters('still-life');
+    expect(groups.map((g) => g.chapter)).toEqual(['Dua Dimsum', 'My Cookies', 'ITB Gitar Nusantara']);
+    expect(groups.flatMap((g) => g.photos)).toHaveLength(catalog.seriesPhotos('still-life').length);
+  });
+
   it('groups chapter photos in chapter order', () => {
     const chapters = catalog.seriesChapters('love-story');
     expect(chapters.map((c) => c.chapter)).toEqual(['Engagement', 'Pre-wedding', 'Wedding', 'Studio']);

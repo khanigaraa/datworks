@@ -2,7 +2,8 @@ import './styles.css';
 import { createMotion } from './motion';
 import { createRouter } from './router';
 import { aboutPage } from './pages/about';
-import { homePage, notFoundPage, seriesPage } from './pages/simple';
+import { seriesPage } from './pages/series';
+import { homePage, notFoundPage } from './pages/simple';
 import { workPage } from './pages/work';
 import { createShell } from './ui/shell';
 

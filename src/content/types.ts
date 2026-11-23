@@ -19,7 +19,7 @@ export interface Photo {
   roll: RollId;
   /** Slug of the series this photo belongs to, if any. */
   series?: string;
-  /** Chapter name, for series with the `chapters` layout. */
+  /** Chapter (or catalog group) name, for series that define `chapters`. */
   chapter?: string;
   /** Meaningful alternative text (English). Required. */
   alt: string;
@@ -45,7 +45,7 @@ export interface Series {
   intro: string;
   /** Photo id used as the cover. */
   cover: string;
-  /** Chapter order, for the `chapters` layout. */
+  /** Chapter order for the `chapters` layout, or product groups for `catalog`. */
   chapters?: string[];
 }
 

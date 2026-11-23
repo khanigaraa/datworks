@@ -77,6 +77,7 @@ export const series: Series[] = [
     clientLabel: 'Dua Dimsum · My Cookies · ITB Gitar Nusantara',
     intro: 'Dimsum, cookies and handmade guitars, catalogued frame by frame.',
     cover: 'still-life-01',
+    chapters: ['Dua Dimsum', 'My Cookies', 'ITB Gitar Nusantara'],
   },
 ];
 
