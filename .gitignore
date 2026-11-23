@@ -1,0 +1,6 @@
+node_modules
+dist
+test-results
+playwright-report
+# Original full-size photos from Google Drive: never committed
+originals/
