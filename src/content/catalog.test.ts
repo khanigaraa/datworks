@@ -33,8 +33,8 @@ describe('queries', () => {
 
   it('returns series photos in curated order', () => {
     const ids = catalog.seriesPhotos('dara-grad').map((p) => p.id);
-    expect(ids[0]).toBe('dara-grad-01');
-    expect(ids).toEqual([...ids].sort());
+    // Story order, not file order: the cover first, then the details.
+    expect(ids.slice(0, 3)).toEqual(['dara-grad-04', 'dara-grad-01', 'dara-grad-02']);
   });
 
   it('groups the still-life catalog by product', () => {
@@ -104,7 +104,7 @@ describe('validation errors', () => {
   };
 
   it('rejects duplicate ids', () => {
-    expect(problems((d) => d.photos.push({ ...d.photos[0] }))).toMatch(/Duplicate photo id "aquatics-01"/);
+    expect(problems((d) => d.photos.push({ ...d.photos[0] }))).toMatch(/Duplicate photo id "dara-grad-04"/);
   });
 
   it('rejects a chapter note for a chapter that does not exist', () => {
@@ -117,7 +117,7 @@ describe('validation errors', () => {
   });
 
   it('rejects empty alt text', () => {
-    expect(problems((d) => (d.photos[0].alt = '  '))).toMatch(/"aquatics-01" has empty alt/);
+    expect(problems((d) => (d.photos[0].alt = '  '))).toMatch(/"dara-grad-04" has empty alt/);
   });
 
   it('rejects a missing cover', () => {

@@ -176,6 +176,15 @@ const LAYOUTS: Record<SeriesLayout, Layout> = {
   blur,
 };
 
+/** Rough rendered width of a frame in each layout, so browsers pick the right file. */
+const SIZES: Record<SeriesLayout, string> = {
+  editorial: '(min-width: 900px) 70vw, 100vw',
+  chapters: '(min-width: 900px) 70vw, 100vw',
+  catalog: '(min-width: 900px) 25vw, 50vw',
+  horizontal: '(min-width: 900px) 60vw, 85vw',
+  blur: '(min-width: 640px) 45vw, 100vw',
+};
+
 /** /series/:slug: one template for every series; the body layout comes from the data. */
 export function seriesPage({ params }: RouteContext): HTMLElement {
   const s = catalog.getSeries(params.slug);
@@ -189,7 +198,9 @@ export function seriesPage({ params }: RouteContext): HTMLElement {
   const next = catalog.nextSeries(s.slug);
 
   const crop = s.layout === 'catalog' ? '4/5' : undefined;
-  const frame = (p: Photo) => photoFigure(p, { frame: { n: photos.indexOf(p) + 1, total: photos.length }, crop });
+  const sizes = SIZES[s.layout];
+  const frame = (p: Photo) =>
+    photoFigure(p, { frame: { n: photos.indexOf(p) + 1, total: photos.length }, crop, sizes });
   const body = photos.filter((p) => p !== cover);
 
   const meta = (label: string, value: string) => h('div', {}, h('dt', { class: 'mono' }, label), h('dd', {}, value));

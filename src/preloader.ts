@@ -1,9 +1,10 @@
 import { gsap } from 'gsap';
-import { Mesh, Program, Renderer, Texture, Triangle } from 'ogl';
+import { Mesh, Program, Renderer, Triangle } from 'ogl';
 import type { Photo } from './content';
 import { reducedMotion } from './motion';
 import { h } from './ui/dom';
-import { photoCanvas } from './ui/photo-canvas';
+import { photoSrc } from './ui/photo';
+import { photoTexture } from './ui/photo-canvas';
 
 const STORAGE_KEY = 'datworks:developed';
 const FULL_MS = 2800;
@@ -66,7 +67,10 @@ function markSeen() {
 }
 
 /** Returns a setter for the developing progress (0–1), or null when WebGL is unavailable. */
-function webglPrint(host: HTMLElement, photo: Photo): { set(p: number): void; destroy(): void } | null {
+function webglPrint(
+  host: HTMLElement,
+  photo: Photo,
+): { set(p: number): void; destroy(): void; ready: Promise<void> } | null {
   let renderer: Renderer;
   try {
     renderer = new Renderer({ dpr: Math.min(devicePixelRatio, 2), alpha: false });
@@ -75,7 +79,7 @@ function webglPrint(host: HTMLElement, photo: Photo): { set(p: number): void; de
   }
   const gl = renderer.gl;
   if (!gl) return null;
-  const texture = new Texture(gl, { image: photoCanvas(photo, 512), generateMipmaps: false });
+  const { texture, ready } = photoTexture(gl, photo, 1280);
   const program = new Program(gl, {
     vertex,
     fragment,
@@ -94,6 +98,7 @@ function webglPrint(host: HTMLElement, photo: Photo): { set(p: number): void; de
   };
   gsap.ticker.add(tick);
   return {
+    ready,
     set: (p) => (program.uniforms.uProgress.value = p),
     destroy() {
       gsap.ticker.remove(tick);
@@ -107,7 +112,7 @@ function webglPrint(host: HTMLElement, photo: Photo): { set(p: number): void; de
  * The "developing" intro: the first showreel frame develops from negative to positive
  * while fonts load. Full length on the first visit, short afterwards, skipped entirely
  * with reduced motion. Without WebGL a CSS filter does the same job.
- * Resolves once the overlay is gone.
+ * Resolves as soon as the overlay starts lifting.
  */
 export function runPreloader(photo: Photo | undefined): Promise<void> {
   if (!photo || reducedMotion()) return Promise.resolve();
@@ -128,12 +133,16 @@ export function runPreloader(photo: Photo | undefined): Promise<void> {
   const gl = webglPrint(print, photo);
   if (!gl) {
     print.classList.add('pre-print-css');
+    if (photo.image)
+      print.style.backgroundImage = `url("${photoSrc(photo.id, photo.image.widths[Math.min(1, photo.image.widths.length - 1)], 'webp')}")`;
     print.style.setProperty('--tone', String(photo.tone ?? 0));
   }
 
   // Progress follows both time and real asset loading (fonts), whichever is slower.
+  // "Loaded" = fonts plus the photo being developed.
   let loaded = 0;
-  document.fonts.ready.then(() => (loaded = 1)).catch(() => (loaded = 1));
+  const assets = Promise.all([document.fonts.ready.catch(() => undefined), gl?.ready]);
+  void assets.then(() => (loaded = 1));
   const state = { time: 0 };
 
   return new Promise((resolve) => {
@@ -153,9 +162,11 @@ export function runPreloader(photo: Photo | undefined): Promise<void> {
         onComplete: () => {
           gl?.destroy();
           overlay.remove();
-          resolve();
         },
       });
+      // Hand the page back as soon as the overlay starts lifting: the uncovered part is already
+      // clickable, so scrolling must work there too (and reveals play while it lifts).
+      resolve();
     };
 
     const timeline = gsap.to(state, {
@@ -170,7 +181,7 @@ export function runPreloader(photo: Photo | undefined): Promise<void> {
       },
       onComplete() {
         if (loaded) finish();
-        else document.fonts.ready.finally(finish);
+        else void assets.finally(finish);
       },
     });
 

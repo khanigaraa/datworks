@@ -374,6 +374,28 @@ main:focus {
   border: 1px solid var(--line);
 }
 
+/* Processed photos: the blurred preview sits underneath until the real image has loaded. */
+.photo-frame.has-image {
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+.photo-frame picture,
+.photo-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.photo-frame img {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.photo-frame.is-loaded img {
+  opacity: 1;
+}
+
 .photo-open {
   position: relative;
   display: block;
@@ -876,6 +898,8 @@ main:focus {
   background:
     radial-gradient(120% 90% at 30% 20%, hsl(var(--tone) 30% 22% / 0.9), transparent 60%),
     linear-gradient(160deg, hsl(var(--tone) 18% 14%), hsl(var(--tone) 12% 7%));
+  background-size: cover;
+  background-position: center;
   filter: invert(calc(1 - var(--developed))) sepia(calc((1 - var(--developed)) * 0.8));
 }
 .pre-foot {

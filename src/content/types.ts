@@ -32,6 +32,15 @@ export interface Photo {
   consent: Consent;
   /** Placeholder tone (0–360 hue) used until real photos are processed. */
   tone?: number;
+  /** Processed image files (`npm run photos`); absent for placeholders. */
+  image?: PhotoImage;
+}
+
+/** Output of the image pipeline: `/photos/<id>-<width>.avif|webp` for each width. */
+export interface PhotoImage {
+  widths: number[];
+  /** Tiny blurred WebP as a data URI, shown while the real image loads. */
+  blur: string;
 }
 
 export interface Series {

@@ -1,7 +1,7 @@
 import { gsap } from 'gsap';
-import { Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
+import { Mesh, Plane, Program, Renderer, Transform } from 'ogl';
 import { catalog } from './content';
-import { photoCanvas } from './ui/photo-canvas';
+import { photoTexture } from './ui/photo-canvas';
 
 const vertex = /* glsl */ `
   attribute vec3 position;
@@ -77,7 +77,7 @@ export function createRipple(root: HTMLElement, velocity: () => number): () => v
     const id = frame.closest<HTMLElement>('[data-photo]')?.dataset.photo;
     const photo = id && catalog.getPhoto(id);
     if (!photo) return [];
-    const texture = new Texture(gl, { image: photoCanvas(photo, 512), generateMipmaps: false });
+    const { texture } = photoTexture(gl, photo, 1280);
     const program = new Program(gl, {
       vertex,
       fragment,

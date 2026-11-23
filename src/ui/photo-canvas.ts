@@ -1,4 +1,6 @@
+import { Texture, type OGLRenderingContext } from 'ogl';
 import type { Photo } from '../content';
+import { photoSrc } from './photo';
 
 /** Paints the placeholder look of a photo onto a canvas (swapped for the real image in ticket 02). */
 export function photoCanvas(photo: Photo, width: number): HTMLCanvasElement {
@@ -18,4 +20,24 @@ export function photoCanvas(photo: Photo, width: number): HTMLCanvasElement {
   g.fillStyle = rad;
   g.fillRect(0, 0, canvas.width, canvas.height);
   return canvas;
+}
+
+/**
+ * A WebGL texture for a photo: the placeholder canvas right away, swapped for the real
+ * image (WebP rendition closest to `width`) once it has loaded. `ready` resolves either way.
+ */
+export function photoTexture(gl: OGLRenderingContext, photo: Photo, width = 1280): { texture: Texture; ready: Promise<void> } {
+  const texture = new Texture(gl, { image: photoCanvas(photo, 512), generateMipmaps: false });
+  if (!photo.image) return { texture, ready: Promise.resolve() };
+  const best = photo.image.widths.reduce((a, b) => (Math.abs(b - width) < Math.abs(a - width) ? b : a));
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = photoSrc(photo.id, best, 'webp');
+  const ready = img
+    .decode()
+    .then(() => {
+      texture.image = img; // OGL re-uploads when the image reference changes
+    })
+    .catch(() => undefined);
+  return { texture, ready };
 }

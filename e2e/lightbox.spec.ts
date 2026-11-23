@@ -3,9 +3,9 @@ import { expect, test } from '@playwright/test';
 test('gallery photos carry contact-sheet frame labels', async ({ page }) => {
   await page.goto('/work?roll=grads');
   const labels = page.locator('.grid .frame-label');
-  await expect(labels.first()).toContainText('Frame 01/14');
+  await expect(labels.first()).toContainText('Frame 01/16');
   await expect(labels.first()).toContainText('grads');
-  await expect(labels.last()).toContainText('Frame 14/14');
+  await expect(labels.last()).toContainText('Frame 16/16');
 });
 
 test('opens, steps with the arrow keys, closes with Escape and returns focus', async ({ page }) => {
@@ -20,16 +20,16 @@ test('opens, steps with the arrow keys, closes with Escape and returns focus', a
   const dialog = page.getByRole('dialog', { name: 'Photo viewer' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('data-photo', secondId!);
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 02/14 · grads');
-  await expect(dialog.getByRole('img')).toHaveAttribute('aria-label', /Dara Grad, frame 2/);
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 02/16 · grads');
+  await expect(dialog.getByRole('img')).toHaveAccessibleName(/bouquet of orange and white flowers/);
 
   await page.keyboard.press('ArrowRight');
   await expect(dialog).toHaveAttribute('data-photo', thirdId!);
   await page.keyboard.press('ArrowLeft');
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 01/14 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 01/16 · grads');
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 14/14 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 16/16 · grads');
 
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
@@ -40,7 +40,7 @@ test('keeps focus inside and closes with the button or the backdrop', async ({ p
   await page.goto('/series/dara-grad');
   await page.locator('.photo-open').first().click();
   const dialog = page.getByRole('dialog', { name: 'Photo viewer' });
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 01/12 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 01/16 · grads');
 
   for (let i = 0; i < 6; i++) {
     await page.keyboard.press('Tab');
@@ -48,7 +48,7 @@ test('keeps focus inside and closes with the button or the backdrop', async ({ p
   }
 
   await page.getByRole('button', { name: 'Next photo' }).click();
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 02/12 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 02/16 · grads');
   await page.getByRole('button', { name: 'Close photo viewer' }).click();
   await expect(dialog).toBeHidden();
 

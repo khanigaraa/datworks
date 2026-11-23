@@ -6,28 +6,72 @@ export interface PhotoOptions {
   frame?: { n: number; total: number };
   /** Crop to a fixed ratio (catalog grids) instead of the photo's own aspect ratio. */
   crop?: string;
+  /** `sizes` hint for responsive images, when the layout knows better than a grid cell. */
+  sizes?: string;
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
 export const frameLabel = (n: number, total: number) => `Frame ${pad(n)}/${pad(total)}`;
 
+export interface FrameOptions {
+  /** Aspect ratio to crop to (e.g. `4/5`); defaults to the photo's own ratio. */
+  ratio?: string;
+  /** Purely visual (e.g. a cover inside a link that already names the series). */
+  decorative?: boolean;
+  /** `sizes` hint for the browser; defaults to a grid cell. */
+  sizes?: string;
+  /** Load right away instead of lazily (lightbox, above-the-fold heroes). */
+  eager?: boolean;
+}
+
+/** URL of one processed rendition, e.g. `/photos/dara-grad-04-1280.avif`. */
+export const photoSrc = (id: string, width: number, format: 'avif' | 'webp') => `/photos/${id}-${width}.${format}`;
+
 /**
- * The picture itself. Until the image pipeline (ticket 02) exists, this is a toned
- * placeholder with the real aspect ratio and alt text, so layouts don't shift later.
+ * The picture itself, at its real aspect ratio so nothing shifts while it loads.
+ * Processed photos render as <picture> (AVIF, then WebP) over their tiny blurred preview,
+ * fading in once decoded. Photos not processed yet render as a toned placeholder.
  */
-export function photoFrame(
-  photo: Photo,
-  ratio = `${photo.width}/${photo.height}`,
-  { decorative = false } = {},
-): HTMLElement {
-  return h('div', {
-    class: 'photo-frame',
-    role: decorative ? undefined : 'img',
-    'aria-label': decorative ? undefined : photo.alt,
-    'aria-hidden': decorative ? 'true' : undefined,
-    style: `aspect-ratio:${ratio};--tone:${photo.tone ?? 0}`,
+export function photoFrame(photo: Photo, opts: FrameOptions = {}): HTMLElement {
+  const ratio = opts.ratio ?? `${photo.width}/${photo.height}`;
+  const image = photo.image;
+  if (!image) {
+    return h('div', {
+      class: 'photo-frame',
+      role: opts.decorative ? undefined : 'img',
+      'aria-label': opts.decorative ? undefined : photo.alt,
+      'aria-hidden': opts.decorative ? 'true' : undefined,
+      style: `aspect-ratio:${ratio};--tone:${photo.tone ?? 0}`,
+    });
+  }
+
+  const sizes = opts.sizes ?? '(min-width: 900px) 34vw, 100vw';
+  const srcset = (format: 'avif' | 'webp') =>
+    image.widths.map((w) => `${photoSrc(photo.id, w, format)} ${w}w`).join(', ');
+  const fallback = image.widths[Math.min(1, image.widths.length - 1)];
+  const img = h('img', {
+    src: photoSrc(photo.id, fallback, 'webp'),
+    srcset: srcset('webp'),
+    sizes,
+    alt: opts.decorative ? '' : photo.alt,
+    width: photo.width,
+    height: photo.height,
+    loading: opts.eager ? 'eager' : 'lazy',
+    decoding: 'async',
   });
+  const frame = h(
+    'div',
+    {
+      class: 'photo-frame has-image',
+      style: `aspect-ratio:${ratio};background-image:url("${image.blur}")`,
+    },
+    h('picture', {}, h('source', { type: 'image/avif', srcset: srcset('avif'), sizes }), img),
+  );
+  const loaded = () => frame.classList.add('is-loaded');
+  if (img.complete && img.naturalWidth) loaded();
+  else img.addEventListener('load', loaded, { once: true });
+  return frame;
 }
 
 /**
@@ -38,7 +82,7 @@ export function photoFigure(photo: Photo, opts: PhotoOptions = {}): HTMLElement 
   const open = h(
     'button',
     { type: 'button', class: 'photo-open', 'data-photo': photo.id, 'aria-label': `Open photo: ${photo.alt}` },
-    photoFrame(photo, opts.crop),
+    photoFrame(photo, { ratio: opts.crop, sizes: opts.sizes }),
     h('span', { class: 'crop-marks', 'aria-hidden': 'true' }),
   );
   const caption =

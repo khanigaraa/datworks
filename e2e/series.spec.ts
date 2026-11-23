@@ -8,8 +8,8 @@ test('opens Dara Grad directly as an editorial series', async ({ page }) => {
   await expect(page.locator('article.series')).toHaveAttribute('data-layout', 'editorial');
   await expect(page.locator('.series-meta')).toContainText('D.');
   await expect(page.locator('.ed-row').first()).toBeAttached();
-  await expect(page.locator('.series .photo')).toHaveCount(12);
-  await expect(page.locator('.frame-label').first()).toContainText('Frame 01/12');
+  await expect(page.locator('.series .photo')).toHaveCount(16);
+  await expect(page.locator('.frame-label').first()).toContainText('Frame 01/16');
   await expect(page).toHaveTitle('Dara Grad · datworks');
 });
 

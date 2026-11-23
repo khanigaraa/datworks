@@ -42,7 +42,7 @@ export function createLightbox(root: HTMLElement, opts: { onToggle(open: boolean
   function show(i: number) {
     index = wrapIndex(i, photos.length);
     const p = photos[index];
-    stage.replaceChildren(photoFrame(p));
+    stage.replaceChildren(photoFrame(p, { sizes: '100vw', eager: true }));
     stage.classList.remove('lb-swap');
     void stage.offsetWidth; // restart the swap animation
     stage.classList.add('lb-swap');

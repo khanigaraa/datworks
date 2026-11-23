@@ -58,7 +58,7 @@ export function homePage(): HTMLElement {
       h(
         'a',
         { href: `/series/${s.slug}`, 'data-link': true, class: 'series-card' },
-        cover && h('div', { class: 'series-card-cover' }, photoFrame(cover, '4/5', { decorative: true })),
+        cover && h('div', { class: 'series-card-cover' }, photoFrame(cover, { ratio: '4/5', decorative: true, sizes: '(min-width: 900px) 30vw, 100vw' })),
         h('span', { class: 'mono' }, `${pad(i + 1)} · ${s.roll} · ${s.year}`),
         h('span', { class: 'series-card-title' }, s.title),
       ),

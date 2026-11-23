@@ -8,7 +8,7 @@ test('navigates through the index menu with a page transition', async ({ page })
 
   const toggle = page.getByRole('button', { name: 'Index' });
   await toggle.click();
-  await expect(page.getByRole('button', { name: 'Close' })).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('button', { name: 'Close', exact: true })).toHaveAttribute('aria-expanded', 'true');
 
   await page.getByRole('dialog', { name: 'Site index' }).getByRole('link', { name: 'About', exact: true }).click();
   await expect(page).toHaveURL(/\/about$/);

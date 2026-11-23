@@ -9,10 +9,13 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "photos": "node scripts/photos.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
+    "@types/node": "22.20.5",
+    "sharp": "0.35.5",
     "typescript": "5.6.3",
     "vite": "5.4.11",
     "vitest": "2.1.8"

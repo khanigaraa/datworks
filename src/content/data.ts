@@ -1,12 +1,35 @@
-import type { ContentData, Photo, Roll, RollId, Series } from './types';
+import photoMeta from './photo-meta.json';
+import type { ContentData, Photo, PhotoImage, Roll, RollId, Series } from './types';
 
 /**
  * Content for the DARKROOM site.
  *
- * Until real photos are processed (ticket 02) and fully curated (ticket 11), photos are
- * dark placeholders generated below. Their ids already follow the final naming scheme.
+ * Real photos come from the image pipeline (`npm run photos` → photo-meta.json). Series that
+ * don't have their real photos yet (ticket 11) use dark placeholders generated below; their
+ * ids already follow the final naming scheme.
  * Client-facing series stay anonymised (`clientLabel` alias) until datworks confirms consent.
  */
+
+type Meta = PhotoImage & { width: number; height: number };
+const META = photoMeta as Record<string, Meta>;
+
+/**
+ * A processed photo. If the pipeline hasn't produced it yet, width/height are 0 and
+ * `validate()` (run at build time) reports it, so a missing photo can't ship silently.
+ */
+function real(id: string, roll: RollId, alt: string, extra: Partial<Photo> = {}): Photo {
+  const m = META[id];
+  return {
+    id,
+    roll,
+    alt,
+    width: m?.width ?? 0,
+    height: m?.height ?? 0,
+    consent: 'ok',
+    image: m && { widths: m.widths, blur: m.blur },
+    ...extra,
+  };
+}
 
 export const rolls: Roll[] = [
   { id: 'lover', title: 'Lover', blurb: 'Engagements, pre-weddings and weddings.' },
@@ -52,7 +75,7 @@ export const series: Series[] = [
     layout: 'editorial',
     clientLabel: 'D.',
     intro: 'A graduation day, slowed down: the gown, the family, the quiet moments in between.',
-    cover: 'dara-grad-01',
+    cover: 'dara-grad-04',
   },
   {
     slug: 'silat-bumi-padjadjaran',
@@ -114,10 +137,60 @@ const SERIES_PREFIX: Record<string, string> = {
   'still-life': 'still-life',
 };
 
+/**
+ * Dara Grad, in story order: the details, the portraits on the red stairs, a black-and-white
+ * pause, then friends and family. Ids are the original file names ("dara grad-04.jpg").
+ * `g` = also in the Grads gallery on /work, `r` = in the Home showreel.
+ */
+const DARA: [n: number, alt: string, flags?: 'g' | 'r' | 'gr'][] = [
+  [4, 'A graduate in a black gown and medal leans on a red railing above a green campus lawn, smiling up at the camera', 'gr'],
+  [1, 'Hands holding a bouquet of orange and white flowers tied with a white ribbon, a graduation sash in the corner', 'g'],
+  [2, 'A hand grips a red university diploma tube against a soft, sunlit background'],
+  [3, 'The graduate stands at the top of a red staircase in her gown and medal, trees and paths behind her', 'g'],
+  [5, 'Beside a red steel staircase, the graduate raises her cap in the air'],
+  [7, 'Framed by red stair railings, the graduate looks up at the camera with campus trees behind', 'g'],
+  [6, 'Seen through a gap in red railings, the graduate stands in the middle of the lawn'],
+  [9, 'Black and white: the graduate in a kebaya stands alone against a plain wall, holding her diploma folder', 'g'],
+  [10, 'Black and white: the graduate in sunglasses leans against a wall beside a staircase'],
+  [13, 'The graduate and a friend sit on the grass with a bouquet, laughing', 'g'],
+  [14, 'Two faces peek out from behind a red pillar, one of them holding a graduation cap', 'g'],
+  [16, 'The graduate walks past a red-and-white campus building while her cap flies through the air'],
+  [18, 'Her parents laugh together, her mother holding a bunch of purple flowers', 'g'],
+  [20, 'The graduate walks toward her parents along a tree-lined path, reaching for their hands'],
+  [21, 'Her father laughs through an orange life buoy hanging by the pool', 'gr'],
+  [22, 'Low angle: her parents stand side by side against a pale sky, holding purple flowers', 'g'],
+];
+
+/** Dara photos kept for the Grads gallery only (not part of the series story). */
+const DARA_GALLERY: [n: number, alt: string][] = [
+  [8, 'Close portrait of the graduate beside a red railing, the campus lawn soft behind her'],
+  [11, 'A bouquet of white and yellow flowers with a florist’s card tucked in'],
+  [12, 'Friends walk across the lawn with flowers while a graduation cap blurs in the foreground'],
+  [15, 'The graduate and a friend lean over the red railing of a campus balcony'],
+  [17, 'The graduate looks up at her tossed cap against a tall campus building'],
+  [19, 'The graduate poses with her parents under the trees, her father lifting the flowers high'],
+];
+
+const daraId = (n: number) => `dara-grad-${pad(n)}`;
+const daraPhotos: Photo[] = [
+  ...DARA.map(([n, alt, flags = '']) =>
+    real(daraId(n), 'grads', alt, {
+      series: 'dara-grad',
+      inGallery: flags.includes('g'),
+      showreel: flags.includes('r'),
+      consent: 'anonymize',
+    }),
+  ),
+  ...DARA_GALLERY.map(([n, alt]) => real(daraId(n), 'grads', alt, { inGallery: true, consent: 'anonymize' })),
+];
+
+/** Series whose real photos are in; the rest still get placeholders. */
+const REAL_SERIES = new Set(['dara-grad']);
+
 const PHOTOS_PER_SERIES = 12;
 const GALLERY_PICKS_PER_SERIES = 4;
 
-const seriesPhotos: Photo[] = series.flatMap((s) =>
+const seriesPhotos: Photo[] = series.filter((s) => !REAL_SERIES.has(s.slug)).flatMap((s) =>
   Array.from({ length: PHOTOS_PER_SERIES }, (_, k) => {
     const n = k + 1;
     const consent = s.slug === 'love-story' ? 'anonymize' : 'ok';
@@ -131,7 +204,7 @@ const seriesPhotos: Photo[] = series.flatMap((s) =>
   }),
 );
 
-const EXTRA_GALLERY: Record<RollId, number> = { lover: 10, grads: 10, event: 2, product: 10, studio: 14 };
+const EXTRA_GALLERY: Record<RollId, number> = { lover: 10, grads: 0, event: 2, product: 10, studio: 14 };
 
 const galleryOnly: Photo[] = rolls.flatMap((r) =>
   Array.from({ length: EXTRA_GALLERY[r.id] }, (_, k) =>
@@ -145,5 +218,5 @@ const galleryOnly: Photo[] = rolls.flatMap((r) =>
 export const contentData: ContentData = {
   rolls,
   series,
-  photos: [...seriesPhotos, ...galleryOnly],
+  photos: [...daraPhotos, ...seriesPhotos, ...galleryOnly],
 };
