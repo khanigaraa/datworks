@@ -36,6 +36,6 @@ export function workPage({ url }: RouteContext): HTMLElement {
       { class: 'count mono', 'aria-live': 'polite' },
       `${String(photos.length).padStart(2, '0')} frames`,
     ),
-    h('div', { class: 'grid' }, ...photos.map((p) => photoFigure(p))),
+    h('div', { class: 'grid' }, ...photos.map((p, i) => photoFigure(p, { frame: { n: i + 1, total: photos.length } }))),
   );
 }

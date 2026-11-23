@@ -372,6 +372,147 @@ main:focus {
   border: 1px solid var(--line);
 }
 
+.photo-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: zoom-in;
+}
+.photo-open .photo-frame {
+  transition: filter 0.35s ease;
+}
+.photo-open:hover .photo-frame {
+  filter: brightness(1.25);
+}
+/* Thin crop marks just outside each corner, like a contact sheet. */
+.crop-marks,
+.crop-marks::before,
+.crop-marks::after {
+  position: absolute;
+  pointer-events: none;
+}
+.crop-marks {
+  inset: -6px;
+  --mark: rgba(236, 230, 223, 0.35);
+  background:
+    linear-gradient(var(--mark), var(--mark)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 1px 10px no-repeat;
+  transition: inset 0.3s ease;
+}
+.photo-open:hover .crop-marks,
+.photo-open:focus-visible .crop-marks {
+  inset: -10px;
+  --mark: var(--safelight);
+}
+@media (max-width: 640px) {
+  .crop-marks {
+    inset: -4px;
+  }
+}
+
+/* Lightbox */
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 16px var(--gutter);
+  border: 0;
+  background: transparent;
+  color: var(--paper);
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    overlay 0.35s allow-discrete,
+    display 0.35s allow-discrete;
+}
+.lightbox[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  opacity: 1;
+}
+@starting-style {
+  .lightbox[open] {
+    opacity: 0;
+  }
+}
+.lightbox::backdrop {
+  background: rgba(8, 7, 7, 0.94);
+}
+.lb-top,
+.lb-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lb-frame {
+  margin: 0;
+  color: var(--safelight);
+}
+.lb-alt {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+.lb-stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  touch-action: pan-y;
+  user-select: none;
+}
+.lb-stage .photo-frame {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+.lb-stage .photo-frame {
+  height: 100%;
+}
+.lb-swap {
+  animation: lb-swap 0.4s ease;
+}
+@keyframes lb-swap {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+.lb-btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: none;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.lb-btn:hover {
+  border-color: var(--safelight);
+  color: var(--safelight);
+}
+
 .frame-label {
   display: flex;
   justify-content: space-between;
