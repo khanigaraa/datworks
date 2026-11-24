@@ -10,7 +10,7 @@
 
 ## The project in one minute
 
-**datworks** is a photography studio from West Java that shoots a little bit of everything ("The King of All Trades"): pre-weddings and weddings, graduations, sport and corporate events, food and products, studio portraits.
+**datworks** ([@datwrk](https://www.instagram.com/datwrk/)) is a photography studio from West Java that shoots a little bit of everything ("The King of All Trades"): pre-weddings and weddings, graduations, sport and corporate events, food and products, studio portraits.
 
 I first built their portfolio site in 2025. The code was never pushed anywhere and was lost, so in 2026 I rebuilt it from scratch, properly this time: specced, ticketed, tested and committed step by step. This repository is that rebuild.
 
