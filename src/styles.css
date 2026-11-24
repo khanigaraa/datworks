@@ -162,12 +162,15 @@ main:focus {
   }
 }
 
-/* Full-screen index menu, lit like a darkroom under the safelight. */
+/* Full-screen index menu, lit like a darkroom under the safelight.
+   .menu is the painted, animated layer and never scrolls; .menu-inner is the scroller and
+   starts below the header, so links never slide under "datworks." (and Chromium doesn't
+   leak the page through a clip-path'd scroller). */
 .menu {
   position: fixed;
   inset: 0;
   z-index: 20;
-  overflow-y: auto;
+  overflow: hidden;
   background:
     radial-gradient(80% 60% at 85% 10%, rgba(242, 69, 58, 0.22), transparent 60%),
     var(--ink);
@@ -183,11 +186,18 @@ main:focus {
   transition: clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1);
 }
 .menu-inner {
+  position: absolute;
+  inset: var(--header-h) 0 0 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  grid-template-rows: auto 1fr; /* the footer row takes the rest, so it sits at the bottom */
+  /* Content scrolling up fades out under the header instead of being cut off. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 28px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 28px);
   gap: 40px clamp(24px, 6vw, 96px);
-  min-height: 100%;
-  padding: 110px var(--gutter) 40px;
+  padding: clamp(24px, 5vh, 48px) var(--gutter) 40px;
 }
 .menu ul,
 .menu ol {
@@ -242,7 +252,8 @@ main:focus {
 @media (max-width: 760px) {
   .menu-inner {
     grid-template-columns: minmax(0, 1fr);
-    padding-top: 96px;
+    grid-template-rows: auto auto 1fr;
+    gap: 32px;
   }
   .menu-meta {
     display: none;
@@ -724,6 +735,31 @@ html.scroll-locked {
   color: var(--safelight);
 }
 
+/* Copy that depends on the input: mouse (scroll) vs touch (swipe). */
+.for-touch {
+  display: none;
+}
+@media (hover: none), (pointer: coarse) {
+  .for-pointer {
+    display: none;
+  }
+  .for-touch {
+    display: inline;
+  }
+}
+
+/* Phones: compact cards that don't stand as tall as a photo. */
+@media (max-width: 899px) {
+  .h-card {
+    align-self: flex-end;
+    width: min(56vw, 240px);
+    padding: 16px;
+  }
+  .h-card-title {
+    font-size: 26px;
+  }
+}
+
 /* Desktop: motion.ts pins the section; the track is moved with transforms, not scrolled. */
 .layout-horizontal.is-pinned {
   height: calc(100vh - var(--header-h));
@@ -858,6 +894,18 @@ html.scroll-locked {
   list-style: none;
   overflow-x: auto;
   scrollbar-width: none;
+}
+.chapter-nav ol {
+  --fade-l: 0px;
+  --fade-r: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+}
+.chapter-nav ol.more-left {
+  --fade-l: 32px;
+}
+.chapter-nav ol.more-right {
+  --fade-r: 32px;
 }
 .chapter-nav a {
   display: inline-flex;
@@ -1023,6 +1071,19 @@ html.scroll-locked {
 }
 .scroll-cue {
   margin-top: 40px;
+}
+/* Phones: a full-screen hero with the title at the bottom left a dead black band on top.
+   Size it to its content instead, so the title and the first reel frame show up together. */
+@media (max-width: 760px) {
+  .hero {
+    min-height: 0;
+    align-content: start;
+    padding-top: clamp(40px, 9vh, 80px);
+    padding-bottom: 24px;
+  }
+  .scroll-cue {
+    margin-top: 24px;
+  }
 }
 
 .reel {

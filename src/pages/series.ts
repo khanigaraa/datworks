@@ -1,6 +1,6 @@
 import { catalog, type Photo, type Series, type SeriesLayout } from '../content';
 import type { RouteContext } from '../router';
-import { scrollToElement } from '../motion';
+import { reducedMotion, scrollToElement } from '../motion';
 import { h, onTeardown } from '../ui/dom';
 import { editorialRows } from '../ui/editorial';
 import { COVER_SIZES, photoFigure } from '../ui/photo';
@@ -89,13 +89,31 @@ const chaptersLayout: Layout = (s, photos, frame) => {
     );
   });
 
-  const nav = h('nav', { class: 'chapter-nav', 'aria-label': 'Chapters' }, h('ol', {}, ...links.map((a) => h('li', {}, a))));
+  const list = h('ol', {}, ...links.map((a) => h('li', {}, a)));
+  const nav = h('nav', { class: 'chapter-nav', 'aria-label': 'Chapters' }, list);
+
+  /** On narrow screens the index scrolls sideways: keep the active chapter in view. */
+  function revealLink(a: HTMLElement) {
+    if (list.scrollWidth <= list.clientWidth) return;
+    const li = a.parentElement!;
+    const left = li.offsetLeft - (list.clientWidth - li.offsetWidth) / 2;
+    list.scrollTo({ left: Math.max(0, left), behavior: reducedMotion() ? 'auto' : 'smooth' });
+  }
+  // Fade the edge that has more chapters behind it.
+  const edges = () => {
+    list.classList.toggle('more-left', list.scrollLeft > 4);
+    list.classList.toggle('more-right', list.scrollLeft + list.clientWidth < list.scrollWidth - 4);
+  };
+  list.addEventListener('scroll', edges, { passive: true });
+  requestAnimationFrame(edges);
   const root = h('div', { class: 'layout-chapters' }, nav, ...sections);
 
   function setActive(section: HTMLElement) {
     for (const a of links) {
-      if (a.dataset.chapter === section.dataset.chapter) a.setAttribute('aria-current', 'true');
-      else a.removeAttribute('aria-current');
+      if (a.dataset.chapter === section.dataset.chapter) {
+        a.setAttribute('aria-current', 'true');
+        revealLink(a);
+      } else a.removeAttribute('aria-current');
     }
     root.dataset.active = section.dataset.chapter;
     root.closest<HTMLElement>('.series')?.style.setProperty('--chapter-tone', section.dataset.tone ?? '0');
@@ -141,8 +159,19 @@ const horizontal: Layout = (s, photos, frame) =>
         'div',
         { class: 'h-card' },
         h('p', { class: 'mono' }, `Lanes 01–${pad(photos.length)}`),
-        h('p', { class: 'h-card-title' }, 'Keep scrolling to swim across.'),
-        h('p', { class: 'mono h-hint', 'aria-hidden': 'true' }, 'Scroll ↓ · Swipe →'),
+        // Mouse users scroll (the strip is pinned); touch users swipe the strip itself.
+        h(
+          'p',
+          { class: 'h-card-title' },
+          h('span', { class: 'for-pointer' }, 'Keep scrolling to swim across.'),
+          h('span', { class: 'for-touch' }, 'Swipe to swim across.'),
+        ),
+        h(
+          'p',
+          { class: 'mono h-hint', 'aria-hidden': 'true' },
+          h('span', { class: 'for-pointer' }, 'Scroll ↓'),
+          h('span', { class: 'for-touch' }, 'Swipe →'),
+        ),
       ),
       ...photos.map((p) => h('div', { class: 'h-item' }, frame(p))),
       h(

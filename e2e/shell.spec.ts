@@ -144,3 +144,30 @@ for (const [label, opts] of [
     });
   });
 }
+
+test.describe('index menu on a short phone screen', () => {
+  test.use({ viewport: { width: 375, height: 640 }, hasTouch: true, isMobile: true });
+
+  // Regression: the menu scrolled as a whole, so its links slid under the transparent header
+  // ("datworks." printed over "Home") and Chromium leaked page photos through the clip-path.
+  test('menu content scrolls below the header, never under it', async ({ page }) => {
+    await page.goto('/work');
+    await expect(page.locator('.preloader')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Index' }).click();
+    const inner = page.locator('.menu-inner');
+    await expect(page.getByRole('dialog', { name: 'Site index' })).toBeVisible();
+
+    const scrollable = await inner.evaluate((el) => el.scrollHeight - el.clientHeight);
+    expect(scrollable).toBeGreaterThan(0); // the menu is taller than this screen
+    await inner.evaluate((el) => (el.scrollTop = el.scrollHeight));
+
+    const headerBottom = await page.locator('.site-header').evaluate((el) => el.getBoundingClientRect().bottom);
+    const scrollerTop = await inner.evaluate((el) => el.getBoundingClientRect().top);
+    expect(scrollerTop).toBeGreaterThanOrEqual(headerBottom - 1);
+    // The menu layer itself doesn't scroll, so nothing behind it can show through.
+    expect(await page.locator('#site-menu').evaluate((el) => el.scrollTop)).toBe(0);
+    // The last links are reachable and the Close button is still there.
+    await expect(page.getByRole('dialog', { name: 'Site index' }).getByRole('link', { name: 'WhatsApp' })).toBeInViewport();
+    await expect(page.getByRole('button', { name: 'Close', exact: true })).toBeInViewport();
+  });
+});
