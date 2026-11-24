@@ -30,7 +30,9 @@ body {
 
 body {
   min-height: 100vh;
-  overflow-x: hidden;
+  /* clip, not hidden: overflow hidden on <body> would make it a scroll container, and the
+     sticky header would then stick to <body> instead of the viewport. */
+  overflow-x: clip;
 }
 
 a {
@@ -247,8 +249,9 @@ main:focus {
   }
 }
 
-.scroll-locked,
-.scroll-locked body {
+/* Lock scrolling on <html> only (menu, lightbox, intro). Never on <body>: that turns <body>
+   into the scroll container and the sticky header jumps back to the top of the document. */
+html.scroll-locked {
   overflow: hidden;
 }
 

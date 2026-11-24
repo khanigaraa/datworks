@@ -102,3 +102,45 @@ test.describe('mobile', () => {
     await expect(h1(page)).toHaveText('Work');
   });
 });
+
+// Regression: locking scroll with overflow on <body> made <body> the scroll container, so the
+// sticky header jumped back to the top of the document and the Close button disappeared.
+for (const [label, opts] of [
+  ['desktop', { viewport: { width: 1280, height: 800 } }],
+  ['phone', { viewport: { width: 375, height: 812 }, hasTouch: true, isMobile: true }],
+] as const) {
+  test.describe(`header stays put after scrolling (${label})`, () => {
+    test.use(opts);
+
+    test('opening the index menu deep in a page keeps the header and Close button', async ({ page }) => {
+      await page.goto('/series/love-story');
+      await expect(page.locator('.preloader')).toHaveCount(0);
+      await page.evaluate(() => window.scrollTo(0, 2500));
+      await expect.poll(() => page.evaluate(() => Math.round(scrollY))).toBeGreaterThan(2000);
+      const scrolled = await page.evaluate(() => Math.round(scrollY));
+
+      await page.getByRole('button', { name: 'Index' }).click();
+      const header = page.locator('.site-header');
+      await expect.poll(() => header.evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBe(0);
+      const close = page.getByRole('button', { name: 'Close', exact: true });
+      await expect(close).toBeInViewport();
+
+      await close.click();
+      await expect(page.getByRole('button', { name: 'Index' })).toHaveAttribute('aria-expanded', 'false');
+      // Closing the menu returns to the same spot on the page.
+      expect(Math.abs((await page.evaluate(() => Math.round(scrollY))) - scrolled)).toBeLessThan(80);
+    });
+
+    test('the lightbox does not move the header either', async ({ page }) => {
+      await page.goto('/work');
+      await expect(page.locator('.preloader')).toHaveCount(0);
+      const target = page.locator('.photo-open').nth(6);
+      await target.scrollIntoViewIfNeeded();
+      await target.click();
+      await page.keyboard.press('Escape');
+      await expect
+        .poll(() => page.locator('.site-header').evaluate((el) => Math.round(el.getBoundingClientRect().top)))
+        .toBe(0);
+    });
+  });
+}
