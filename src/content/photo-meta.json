@@ -4,6 +4,7 @@
     "height": 1366,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -18,6 +19,7 @@
     "height": 1366,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -32,6 +34,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRuYAAABXRUJQVlA4INoAAADQBgCdASoUAB4APulkqk2pJaQiMBgMASAdCWwAsR7iKtWAxbrTAGu6FrVOcbq+svxqelzEndv+i9Zp6gamyFAA/rION0bQQOSB5RqtAHpv4YliJxhwlp81M94l2UGgBm7NwH7rcuN/ISsCoJ+AuvU4gFDoNUUwLJC9qCQFjlj0bFDnRfxU/+1/GZ9XJd6I1jLu8JnzDQ998K5qA6P5J6gRorEbSWxAZYbkj+iakjdMgrob6mv9rrfHGiAsrecODauckFla8j7QLGyGw2efO7Pzsrl5lqOoRSUAAA==",
@@ -45,6 +48,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRkgBAABXRUJQVlA4IDwBAACQBwCdASoUAB4APu1epk2ppKMiMAgBMB2JbACdMuz11oM5FGA2yd2wbztPgmYrE0AOFb+EsbAm2hbTB9eXqvNryU3HpjgA/rqFrYOnm+PLxwJHJAdqjSMCfOtZnhuw62tIpdqUrJ4sTkttJBhj3Vf0SdL8hEt/ZumZGA9AV+htOzazbYgD72g/GuAUoc9WRJCMmXHmxZTF/lvse3J1AV6yLqGGe1rLoQx9Ptvdqhuc+5hQ2NSxc1E7Wah1Qc/XzqeQWF4wr718t5K1OyhnWgB/JK/7qFi20KwsFR/9rsjqP0I71U65QovFwHSt6e6t/30Qk9WMN/gakEN+oVaD3cMFpoE1GIebQcK8BqhMdaaw2A/GnUx+VshIwEhrn5IUAHP+iwmiGiMHqbIokmftg3qsjf38SG6NiAwUAAAA",
@@ -58,6 +62,7 @@
     "height": 1366,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -72,6 +77,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -86,6 +92,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -100,6 +107,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -114,6 +122,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRgoBAABXRUJQVlA4IP4AAABQBgCdASoUAB4APu1oqVAppaOiqA1RMB2JbACdMoMluIxz2YtmPaOrw4dikdjcbBYZoQ6BI0YO6/GVAAD+704ULxRj7cISuEecJn5F4MqTO9Y1y5YkH02K+xIDCw5pKMMBXuG+pPG3S8P95Q0ApnGcDTvRbqI9gj+J3p8s9eDr8sTNe9mh94yET8QqF5RdKaTa9v5fzSBFluwsOZ9tfcYH1RWTRnflJHRYgtVNpWw5Hl2T5ULkzRZj8kiuj3rqrx+HGXpfmHADqqjLhovAMOF1fzyIpdKWYKQ7hjXwYDKD9xxoW+o1WpkuvxVrxBMMsBp1K2NggNGc4zV9CbhAAA==",
@@ -127,6 +136,7 @@
     "height": 1366,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -141,6 +151,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRigBAABXRUJQVlA4IBwBAAAQBwCdASoUAB4APu1gqlAppSOisBgIATAdiWwAnTKEdJCws3ratvQaarvO6/AExpYAoya7amoMHFbstZl9EG39AAD+xBJev9+XCV3vY2FJ+a1F74bMV4AkoKO7vFMb7IjqMND6FmDRhZNDlAh7tnhp+tbC9lqEvqg9V3OU23AfX/RmCkIy5fN7iun3E6mQvn1vnLVAuYCW2EKehzIoBI9FutWaja7/5n49U7Zsvy1VhwE5TVSkzDzJeefOL1tii4QjS0Xsw//0jqN4WH7qopyLEN0BxSQwSXvvV8/Lt4lsh5pmFxynfuPFM86LIDLrnvl2Hn4qO7rBscSBp8XysB7fsaRG938bwjp/VKBD7IqXuNYBPufZUR1teAAAAA==",
@@ -154,6 +165,7 @@
     "height": 1366,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -168,6 +180,7 @@
     "height": 3881,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -182,6 +195,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -196,6 +210,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -210,6 +225,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -224,6 +240,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -238,6 +255,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -252,6 +270,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -266,6 +285,7 @@
     "height": 5489,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -280,6 +300,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -294,6 +315,7 @@
     "height": 1366,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -308,6 +330,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -322,6 +345,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -336,6 +360,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -350,6 +375,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -364,6 +390,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -378,6 +405,7 @@
     "height": 6000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -392,6 +420,7 @@
     "height": 5533,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -406,6 +435,7 @@
     "height": 3733,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -420,6 +450,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -434,6 +465,7 @@
     "height": 3932,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -448,6 +480,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -462,6 +495,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -476,6 +510,7 @@
     "height": 3803,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -490,6 +525,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -504,6 +540,7 @@
     "height": 3805,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -518,6 +555,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -532,6 +570,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -546,6 +585,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -560,6 +600,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -574,6 +615,7 @@
     "height": 3739,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -588,6 +630,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -602,6 +645,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -616,6 +660,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -630,6 +675,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -644,6 +690,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -658,6 +705,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRuIAAABXRUJQVlA4INYAAAAQBgCdASoUAB4APu1grFAppSQisBgIATAdiWkAzFwKFl1DAM3MI0czP9TVFqgefvHiJ+yuMrjDhGAA/tgHiSCrjm8mkHKSjaVqBYuuOY98mP3UvakerpD/A0TsimFrqDK3Lizo0WH3rJ8gH/62BAC8Axfr+ncm72CQYhDCxSWh0SDDlQybePLHoCKGdj2Dd0Msb2/6rbBFEmJxC7PQkAXzp84chGvQ/ektTcWhDp29s7S+5QX/DFb0whM6xVU0ftWurZW7isG4kOqmFpJET2poAs8AAAAA",
@@ -671,6 +719,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRvIAAABXRUJQVlA4IOYAAACQBQCdASoUAB4APu1eq1AppKOisBgIATAdiUAX5zGgZ1Jmlu6uDIOOCatzQLGOmx9vV2BbwAD+2VhJyKtUCPvX1PyqA2iboeibfVHakh+HSUv6GeiUWxEZm9KZu2XN/TkUMYL+DqB4E2OeYCcrssifvomEB56VveXcntrqElEnDp+MDc4+gLcINybynwR+YyUH344Si04hOg+8021gOV9Stbs6dFqGS4tfZ+pGgsE/pRNSUEGvSn8jPKilgKrA8++OXGhs6ZXdkgXkkHNB9vr8Diu8HU4P9cfBKX+r6/I3P/Jx8EAAAA==",
@@ -684,6 +733,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -698,6 +748,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -712,6 +763,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -726,6 +778,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -740,6 +793,7 @@
     "height": 6000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -754,6 +808,7 @@
     "height": 6000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -768,6 +823,7 @@
     "height": 2358,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -782,6 +838,7 @@
     "height": 3927,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -796,6 +853,7 @@
     "height": 3595,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -810,6 +868,7 @@
     "height": 3827,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -824,6 +883,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -838,6 +898,7 @@
     "height": 5291,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -852,6 +913,7 @@
     "height": 4530,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -866,6 +928,7 @@
     "height": 3554,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -880,6 +943,7 @@
     "height": 3008,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -894,6 +958,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -908,6 +973,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -922,6 +988,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -936,6 +1003,7 @@
     "height": 1365,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -950,6 +1018,7 @@
     "height": 2048,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAAAQBgCdASoUAB4APu1mq02ppaQiMAgBMB2JaQDAKdz5h3cmxPuXyY3G3Jhr4s1ENM3nB8WRbnj4ydAA/rmwqnw5659udKJ1dYU4TYHMCS8r8DVLsx17cGz66Jp0SIrRu/HlcLh49XQbX+gH+vZ/rN4CQGibFdEk44BKssFHyTkdI1GyAPT9ypILhg3If7y5bcZPkcMxXel5MppZuJnFwm7hZvWGH2lg9yw39YatAAxZwkmwda9CqZYYqtFoGRLIZGhl60DuZBrq5gAA",
@@ -963,6 +1032,7 @@
     "height": 4320,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -977,6 +1047,7 @@
     "height": 2070,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -991,6 +1062,7 @@
     "height": 3702,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1005,6 +1077,7 @@
     "height": 3785,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1019,6 +1092,7 @@
     "height": 3793,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1033,6 +1107,7 @@
     "height": 6000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1047,6 +1122,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1061,6 +1137,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1075,6 +1152,7 @@
     "height": 2624,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1089,6 +1167,7 @@
     "height": 2624,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1103,6 +1182,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1117,6 +1197,7 @@
     "height": 2624,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1131,6 +1212,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1145,6 +1227,7 @@
     "height": 2624,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1159,6 +1242,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1173,6 +1257,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1187,6 +1272,7 @@
     "height": 2624,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1201,6 +1287,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1215,6 +1302,7 @@
     "height": 2456,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1229,6 +1317,7 @@
     "height": 2451,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1243,6 +1332,7 @@
     "height": 3734,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1257,6 +1347,7 @@
     "height": 2000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1271,6 +1362,7 @@
     "height": 2543,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1285,6 +1377,7 @@
     "height": 2624,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1299,6 +1392,7 @@
     "height": 2776,
     "widths": [
       640,
+      960,
       1280
     ],
     "blur": "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAACQBQCdASoUAB4APu1urlKppiQiqAgBMB2JZQDE2YyqOj5wbHO1OOQDHLsMaXpmfjHGGkSEQAD+0tjNsCRK8aXbkO9q2wQinmqj70+jFyUhOpgdRLGfaGeRPAoZrzUf0sVc4sx+RykmK2bLPkc4fl3UOwga0WCHyTvMUDFo6ElzmEqpQmo8dDb4iDk4sf/BxPoJJjRDAHuL+Qa8BmPLszJkod87JUBaqJSHRcSXvEq6QTqUOaYaOPShFJQw02XDgAA=",
@@ -1312,6 +1406,7 @@
     "height": 2496,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1326,6 +1421,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1340,6 +1436,7 @@
     "height": 2481,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1354,6 +1451,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1368,6 +1466,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1382,6 +1481,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1396,6 +1496,7 @@
     "height": 5531,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1410,6 +1511,7 @@
     "height": 6000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1424,6 +1526,7 @@
     "height": 3905,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1438,6 +1541,7 @@
     "height": 3243,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1452,6 +1556,7 @@
     "height": 3563,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1466,6 +1571,7 @@
     "height": 3243,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1480,6 +1586,7 @@
     "height": 4800,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1494,6 +1601,7 @@
     "height": 4800,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1508,6 +1616,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1522,6 +1631,7 @@
     "height": 4000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1536,6 +1646,7 @@
     "height": 6000,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1550,6 +1661,7 @@
     "height": 3936,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],
@@ -1563,7 +1675,8 @@
     "width": 972,
     "height": 1458,
     "widths": [
-      640
+      640,
+      960
     ],
     "blur": "data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAABQBQCdASoUAB4APu1mqk2ppaQiMAgBMB2JaQAFEAG+VACs9P+J+IUoy1t402W5+nwDePQA/dLF1/NV4/Zb3moMqn3+cnD+xkpEhvYlUOKmlXQaAYTWHPysqvLkPRwfbC9nMP/Ls6vc7cL3Cr/2HwgHzNoo0imFlVNUVoQNaGffErWvwA99P9n6WHO/mYlWOibQlExkhIWBve4YK89yKPlB1nQq/JCSKqH7Q/MkA+f2kNyQiOAt8GkGjOctJgAA",
     "source": {
@@ -1576,6 +1689,7 @@
     "height": 3008,
     "widths": [
       640,
+      960,
       1280,
       1920
     ],

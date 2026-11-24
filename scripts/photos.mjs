@@ -21,13 +21,18 @@ const OUT = join(ROOT, 'public', 'photos');
 const META = join(ROOT, 'src', 'content', 'photo-meta.json');
 const MANIFEST = join(ROOT, 'scripts', 'photos.manifest.json');
 
-const WIDTHS = [640, 1280, 1920];
+const WIDTHS = [640, 960, 1280, 1920]; // 960 fits phones at DPR ~1.75 without jumping to 1280
 const AVIF = { quality: 50, effort: 2 }; // effort 4 is ~25% smaller but ~9x slower in wasm
 const WEBP = { quality: 74 };
 const BLUR_WIDTH = 20;
 
 const force = process.argv.includes('--force');
 
+/** Renditions for a source of the given width (never upscaled). */
+const widthsFor = (width) => {
+  const widths = WIDTHS.filter((w) => w <= width);
+  return widths.length ? widths : [width];
+};
 const outputs = (id, widths) => widths.flatMap((w) => ['avif', 'webp'].map((f) => join(OUT, `${id}-${w}.${f}`)));
 const sortKeys = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 const save = (meta) => writeFileSync(META, JSON.stringify(sortKeys(meta), null, 2) + '\n');
@@ -36,26 +41,25 @@ async function processPhoto(id, file, previous) {
   const { size, mtimeMs } = statSync(file);
   const source = { size, mtimeMs: Math.round(mtimeMs) };
 
-  if (
-    !force &&
-    previous &&
-    previous.source?.size === source.size &&
-    previous.source?.mtimeMs === source.mtimeMs &&
-    outputs(id, previous.widths).every((p) => existsSync(p))
-  )
-    return { meta: previous, skipped: true };
+  const unchanged = previous && previous.source?.size === source.size && previous.source?.mtimeMs === source.mtimeMs;
+  const expected = previous ? widthsFor(previous.width) : [];
+  if (!force && unchanged && outputs(id, expected).every((p) => existsSync(p)))
+    return { meta: { ...previous, widths: expected }, skipped: true };
 
   const info = await sharp(file).metadata();
   const rotated = (info.orientation ?? 1) >= 5;
   const width = rotated ? info.height : info.width;
   const height = rotated ? info.width : info.height;
-  const widths = WIDTHS.filter((w) => w <= width);
-  if (!widths.length) widths.push(width);
+  const widths = widthsFor(width);
 
   for (const w of widths) {
+    const avif = join(OUT, `${id}-${w}.avif`);
+    const webp = join(OUT, `${id}-${w}.webp`);
+    // Same source and the files are there (e.g. only a new width was added): keep them.
+    if (!force && unchanged && existsSync(avif) && existsSync(webp)) continue;
     const resized = sharp(file).rotate().resize({ width: w });
-    await resized.clone().avif(AVIF).toFile(join(OUT, `${id}-${w}.avif`));
-    await resized.clone().webp(WEBP).toFile(join(OUT, `${id}-${w}.webp`));
+    await resized.clone().avif(AVIF).toFile(avif);
+    await resized.clone().webp(WEBP).toFile(webp);
   }
   const tiny = await sharp(file).rotate().resize({ width: BLUR_WIDTH }).webp({ quality: 40 }).toBuffer();
 

@@ -2,14 +2,15 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
-import { canRipple, createRipple } from './ripple';
+import { webglCapable } from './capability';
+import { reducedMotion } from './motion-pref';
 import type { RouterHooks } from './router';
 import { onTeardown } from './ui/dom';
 import { skewToBlur, velocityToSkew } from './ui/velocity';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+export { reducedMotion };
 
 let activeLenis: Lenis | null = null;
 
@@ -21,8 +22,10 @@ export function scrollToElement(el: HTMLElement) {
 
 /**
  * Motion layer: smooth scroll (Lenis), page transitions (a "safelight" curtain) and
- * scroll reveals. Every animation a page creates lives in one gsap.context that is
+ * scroll reveals. Every GSAP animation a page creates lives in one gsap.context that is
  * reverted on unmount, so tweens and ScrollTriggers never leak across pages.
+ * Reveals are CSS transitions toggled by one IntersectionObserver per page: far cheaper than a
+ * ScrollTrigger per element (which cost ~1 s of layout on a throttled phone).
  * Reveals and parallax wait for `ready` (the preloader) so they play where people can see them.
  * With reduced motion: no Lenis, no curtain, no reveals; content is simply there.
  */
@@ -31,7 +34,15 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
   let ctx: gsap.Context | null = null;
   let lenis: Lenis | null = null;
 
+  let revealObserver: IntersectionObserver | null = null;
+
   if (!reduce) {
+    // `.motion` hides [data-reveal] until revealed (see styles.css); never set with reduced motion.
+    document.documentElement.classList.add('motion');
+  }
+  // Smooth scroll is for mouse wheels. On touch screens Lenis wouldn't smooth anything anyway,
+  // and its per-frame loop would keep the main thread (and battery) busy for nothing.
+  if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     lenis = new Lenis({ autoRaf: false });
     activeLenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
@@ -39,23 +50,30 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
     gsap.ticker.lagSmoothing(0);
   }
 
-  /** Hide reveal targets right away so nothing flashes before the animation starts. */
-  function hideReveals(root: HTMLElement) {
-    const targets = root.querySelectorAll<HTMLElement>('[data-reveal]');
-    if (targets.length) gsap.set(targets, { opacity: 0, y: 36 });
+  /** Reveal `[data-reveal]` elements as they scroll in; those arriving together are staggered. */
+  function observeReveals(root: HTMLElement) {
+    revealObserver = new IntersectionObserver(
+      (entries) => {
+        let i = 0;
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          el.style.setProperty('--reveal-delay', `${Math.min(i++, 8) * 60}ms`);
+          el.classList.add('is-in');
+          revealObserver?.unobserve(el);
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    root.querySelectorAll('[data-reveal]').forEach((el) => revealObserver!.observe(el));
   }
 
-  /** Scroll reveals for `[data-reveal]` and parallax for `[data-speed]` (positive = slower). */
+  /** Scroll reveals, parallax for `[data-speed]` (positive = slower) and per-layout effects. */
   function play(root: HTMLElement) {
-    const targets = root.querySelectorAll<HTMLElement>('[data-reveal]');
-    if (targets.length)
-      ScrollTrigger.batch(targets, {
-        start: 'top 92%',
-        once: true,
-        onEnter: (batch) =>
-          gsap.to(batch, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06, overwrite: true }),
-      });
-    for (const el of root.querySelectorAll<HTMLElement>('[data-speed]')) {
+    observeReveals(root);
+    // Parallax is a desktop nicety; on phones it costs more main-thread time than it gives.
+    const parallax = matchMedia('(min-width: 900px) and (hover: hover)').matches;
+    for (const el of parallax ? root.querySelectorAll<HTMLElement>('[data-speed]') : []) {
       gsap.fromTo(
         el,
         { yPercent: Number(el.dataset.speed) * 10 },
@@ -115,10 +133,12 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
         invalidateOnRefresh: true,
       },
     });
-    if (canRipple()) {
-      const stop = createRipple(section, () => tween.scrollTrigger?.getVelocity() ?? 0);
-      onTeardown(section, stop);
-    }
+    // The WebGL water lives in its own chunk, fetched only on capable desktops.
+    if (webglCapable())
+      void import('./ripple').then(({ createRipple }) => {
+        if (!section.isConnected) return; // the page changed while the chunk was loading
+        onTeardown(section, createRipple(section, () => tween.scrollTrigger?.getVelocity() ?? 0));
+      });
   }
 
   const hooks: Required<RouterHooks> = {
@@ -134,12 +154,14 @@ export function createMotion(curtain: HTMLElement, ready: Promise<void> = Promis
       });
     },
     unmount() {
+      revealObserver?.disconnect();
+      revealObserver = null;
       ctx?.revert();
       ctx = null;
     },
     enter(el, { transition }) {
       if (reduce) return;
-      const page = gsap.context(() => hideReveals(el), el);
+      const page = gsap.context(() => undefined, el);
       ctx = page;
       if (transition) {
         gsap.killTweensOf(curtain);

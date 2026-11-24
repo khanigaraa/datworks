@@ -10,7 +10,8 @@ const vertex = /* glsl */ `
   uniform vec2 uViewport;  // viewport size in CSS pixels
   varying vec2 vUv;
   void main() {
-    // Positions are flipped into DOM space (y down), so flip v too: vUv is (0,0) at the frame's top-left.
+    // Positions are flipped into DOM space (y down), so flip v too: the image top (v = 1 with flipY)
+    // lands on the frame's top edge.
     vUv = vec2(uv.x, 1.0 - uv.y);
     vec2 px = uRect.xy + (position.xy + 0.5) * uRect.zw;
     vec2 clip = px / uViewport * 2.0 - 1.0;
@@ -31,7 +32,7 @@ const fragment = /* glsl */ `
 
   void main() {
     vec2 uv = vUv;
-    vec2 m = uMouse; // already in the frame's top-left-origin space
+    vec2 m = vec2(uMouse.x, 1.0 - uMouse.y); // DOM mouse is top-left origin; vUv.y is 1 at the top
     float d = distance(uv, m);
     float ring = sin(d * 42.0 - uTime * 6.0) * exp(-d * 5.0) * uHover * 0.014;
     vec2 swell = vec2(sin(uv.y * 16.0 + uTime * 2.4), cos(uv.x * 12.0 + uTime * 1.8)) * uStrength * 0.018;
@@ -42,17 +43,6 @@ const fragment = /* glsl */ `
     gl_FragColor = vec4(c, 1.0);
   }
 `;
-
-/** WebGL is worth it only on a capable desktop: fine pointer, enough cores and memory. */
-export function canRipple(): boolean {
-  const nav = navigator as Navigator & { deviceMemory?: number };
-  if ((nav.hardwareConcurrency ?? 8) < 4 || (nav.deviceMemory ?? 8) < 4) return false;
-  try {
-    return !!document.createElement('canvas').getContext('webgl');
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Draws every `[data-photo]` frame inside `root` with a water-ripple shader, using one

@@ -1,54 +1,14 @@
 import { gsap } from 'gsap';
-import { Mesh, Program, Renderer, Triangle } from 'ogl';
 import type { Photo } from './content';
-import { reducedMotion } from './motion';
+import { finePointer } from './capability';
+import { reducedMotion } from './motion-pref';
+import type { GlPrint } from './preloader-gl';
 import { h } from './ui/dom';
-import { photoSrc } from './ui/photo';
-import { photoTexture } from './ui/photo-canvas';
+import { INTRO_SIZES, photoSrc, photoSrcset } from './ui/photo';
 
 const STORAGE_KEY = 'datworks:developed';
-const FULL_MS = 2800;
+const FULL_MS = 2200;
 const SHORT_MS = 900;
-
-const vertex = /* glsl */ `
-  attribute vec2 uv;
-  attribute vec2 position;
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = vec4(position, 0.0, 1.0);
-  }
-`;
-
-// Negative → positive: an orange-based film negative develops in uneven, organic
-// patches (value noise), under a red safelight wash that fades as the print appears.
-const fragment = /* glsl */ `
-  precision highp float;
-  uniform sampler2D tMap;
-  uniform float uProgress;
-  uniform float uTime;
-  varying vec2 vUv;
-
-  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-  float noise(vec2 p) {
-    vec2 i = floor(p), f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
-    return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
-               mix(hash(i + vec2(0.0, 1.0)), hash(i + 1.0), f.x), f.y);
-  }
-
-  void main() {
-    vec3 c = texture2D(tMap, vUv).rgb;
-    vec3 negative = (1.0 - c) * vec3(1.0, 0.62, 0.42);
-    float n = noise(vUv * 3.0 + uTime * 0.08) * 0.65 + noise(vUv * 11.0) * 0.35;
-    float developed = smoothstep(n - 0.2, n + 0.2, uProgress * 1.4 - 0.2);
-    vec3 col = mix(negative, c, developed);
-    col = mix(col, col * vec3(1.0, 0.3, 0.25), (1.0 - uProgress) * 0.45);
-    col += (hash(vUv * 900.0 + fract(uTime)) - 0.5) * 0.07;
-    float vignette = smoothstep(1.1, 0.35, length(vUv - 0.5) * 1.4);
-    gl_FragColor = vec4(col * vignette, 1.0);
-  }
-`;
 
 function readSeen(): boolean {
   try {
@@ -66,48 +26,6 @@ function markSeen() {
   }
 }
 
-/** Returns a setter for the developing progress (0–1), or null when WebGL is unavailable. */
-function webglPrint(
-  host: HTMLElement,
-  photo: Photo,
-): { set(p: number): void; destroy(): void; ready: Promise<void> } | null {
-  let renderer: Renderer;
-  try {
-    renderer = new Renderer({ dpr: Math.min(devicePixelRatio, 2), alpha: false });
-  } catch {
-    return null;
-  }
-  const gl = renderer.gl;
-  if (!gl) return null;
-  const { texture, ready } = photoTexture(gl, photo, 1280);
-  const program = new Program(gl, {
-    vertex,
-    fragment,
-    uniforms: { tMap: { value: texture }, uProgress: { value: 0 }, uTime: { value: 0 } },
-  });
-  const mesh = new Mesh(gl, { geometry: new Triangle(gl), program });
-  host.append(gl.canvas);
-
-  const resize = () => renderer.setSize(host.clientWidth, host.clientHeight);
-  resize();
-  addEventListener('resize', resize);
-
-  const tick = (t: number) => {
-    program.uniforms.uTime.value = t;
-    renderer.render({ scene: mesh });
-  };
-  gsap.ticker.add(tick);
-  return {
-    ready,
-    set: (p) => (program.uniforms.uProgress.value = p),
-    destroy() {
-      gsap.ticker.remove(tick);
-      removeEventListener('resize', resize);
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
-    },
-  };
-}
-
 /**
  * The "developing" intro: the first showreel frame develops from negative to positive
  * while fonts load. Full length on the first visit, short afterwards, skipped entirely
@@ -121,6 +39,24 @@ export function runPreloader(photo: Photo | undefined): Promise<void> {
   markSeen();
 
   const print = h('div', { class: 'pre-print', style: `aspect-ratio:${photo.width}/${photo.height}` });
+  // The photo itself, as a real <img> under the WebGL canvas: the content is on screen from the
+  // first frames (and is what the browser counts as the largest paint), and it is also what the
+  // no-WebGL fallback develops with a CSS filter.
+  if (photo.image) {
+    const w = photo.image.widths[Math.min(1, photo.image.widths.length - 1)];
+    print.append(
+      h('img', {
+        class: 'pre-photo',
+        src: photoSrc(photo.id, w, 'webp'),
+        srcset: photoSrcset(photo, 'webp'),
+        sizes: INTRO_SIZES,
+        alt: '',
+        width: photo.width,
+        height: photo.height,
+        fetchpriority: 'high',
+      }),
+    );
+  }
   const status = h('span', { class: 'pre-status mono' }, 'Developing 00%');
   const skip = h('button', { type: 'button', class: 'pre-skip mono' }, 'Skip intro');
   const overlay = h(
@@ -130,23 +66,32 @@ export function runPreloader(photo: Photo | undefined): Promise<void> {
   );
   document.body.append(overlay);
 
-  const gl = webglPrint(print, photo);
-  if (!gl) {
-    print.classList.add('pre-print-css');
-    if (photo.image)
-      print.style.backgroundImage = `url("${photoSrc(photo.id, photo.image.widths[Math.min(1, photo.image.widths.length - 1)], 'webp')}")`;
-    print.style.setProperty('--tone', String(photo.tone ?? 0));
-  }
+  // Desktops develop the print with a shader (its own chunk, so phones never download it);
+  // phones, touch screens and browsers without WebGL use the light CSS version.
+  let gl: GlPrint | null = null;
+  const useCss = () => print.classList.add('pre-print-css');
+  let glReady: Promise<void> = Promise.resolve();
+  if (matchMedia('(min-width: 768px)').matches && finePointer()) {
+    print.classList.add('pre-print-wait'); // keep the positive photo hidden until the shader runs
+    glReady = import('./preloader-gl')
+      .then(({ webglPrint }) => {
+        gl = finished ? null : webglPrint(print, photo);
+        if (!gl) useCss();
+        return gl?.ready;
+      })
+      .catch(useCss)
+      .finally(() => print.classList.remove('pre-print-wait'));
+  } else useCss();
 
   // Progress follows both time and real asset loading (fonts), whichever is slower.
   // "Loaded" = fonts plus the photo being developed.
   let loaded = 0;
-  const assets = Promise.all([document.fonts.ready.catch(() => undefined), gl?.ready]);
+  let finished = false;
+  const assets = Promise.all([document.fonts.ready.catch(() => undefined), glReady]);
   void assets.then(() => (loaded = 1));
   const state = { time: 0 };
 
   return new Promise((resolve) => {
-    let finished = false;
     const finish = () => {
       if (finished) return;
       finished = true;

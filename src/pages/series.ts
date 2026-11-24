@@ -3,7 +3,7 @@ import type { RouteContext } from '../router';
 import { scrollToElement } from '../motion';
 import { h, onTeardown } from '../ui/dom';
 import { editorialRows } from '../ui/editorial';
-import { photoFigure } from '../ui/photo';
+import { COVER_SIZES, photoFigure } from '../ui/photo';
 import { notFoundPage } from './simple';
 
 type Layout = (series: Series, photos: Photo[], frame: (p: Photo) => HTMLElement) => HTMLElement;
@@ -227,7 +227,12 @@ export function seriesPage({ params }: RouteContext): HTMLElement {
       ),
       h('p', { class: 'lede series-intro', 'data-reveal': true }, s.intro),
     ),
-    cover && h('div', { class: 'series-cover' }, frame(cover)),
+    cover &&
+      h(
+        'div',
+        { class: 'series-cover' },
+        photoFigure(cover, { frame: { n: photos.indexOf(cover) + 1, total: photos.length }, crop, sizes: COVER_SIZES, priority: true }),
+      ),
     LAYOUTS[s.layout](s, body, frame),
     next &&
       h(

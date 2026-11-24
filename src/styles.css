@@ -3,7 +3,7 @@
   --ink-2: #151313;
   --paper: #ece6df;
   --muted: #8f8780;
-  --safelight: #e0322b;
+  --safelight: #f2453a;
   --line: rgba(236, 230, 223, 0.14);
   --serif: 'Instrument Serif', 'Times New Roman', serif;
   --sans: 'Inter', system-ui, sans-serif;
@@ -167,7 +167,7 @@ main:focus {
   z-index: 20;
   overflow-y: auto;
   background:
-    radial-gradient(80% 60% at 85% 10%, rgba(224, 50, 43, 0.22), transparent 60%),
+    radial-gradient(80% 60% at 85% 10%, rgba(242, 69, 58, 0.22), transparent 60%),
     var(--ink);
   visibility: hidden;
   clip-path: inset(0 0 100% 0);
@@ -279,6 +279,22 @@ main:focus {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain 0.9s steps(6) infinite;
 }
+/* Phones and touch screens: still grain, solid bars. Jittering a viewport-sized layer and
+   blurring what's behind the header cost real frame time on mobile GPUs. */
+@media (hover: none), (pointer: coarse), (max-width: 760px) {
+  .grain {
+    inset: 0;
+    animation: none;
+  }
+  .site-header,
+  .chapter-nav {
+    backdrop-filter: none;
+    background-color: rgba(11, 10, 10, 0.96);
+  }
+  .chapter-nav {
+    background-color: hsl(var(--chapter-tone) 28% 7%);
+  }
+}
 @keyframes grain {
   0% { transform: translate(0, 0); }
   20% { transform: translate(-6%, 4%); }
@@ -374,6 +390,19 @@ main:focus {
   border: 1px solid var(--line);
 }
 
+/* Scroll reveals: hidden only when motion is on (motion.ts adds .motion), shown by .is-in. */
+.motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+}
+.motion [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
 /* Processed photos: the blurred preview sits underneath until the real image has loaded. */
 .photo-frame.has-image {
   position: relative;
@@ -394,6 +423,10 @@ main:focus {
 }
 .photo-frame.is-loaded img {
   opacity: 1;
+}
+.photo-frame.is-priority img {
+  opacity: 1;
+  transition: none;
 }
 
 .photo-open {
@@ -705,6 +738,33 @@ main:focus {
   height: calc(100vh - var(--header-h) - 120px);
 }
 
+/* Hover in the Work grid and Home showreel. CSS fallback (touch, no WebGL, weak devices):
+   the red safelight blooms over the photo. With WebGL (hover.ts adds .hover-gl) the shared
+   canvas draws the effect instead. */
+[data-hover-fx] .photo-open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, rgba(242, 69, 58, 0.32), transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+[data-hover-fx] .photo-open:hover::after,
+[data-hover-fx] .photo-open:focus-visible::after {
+  opacity: 1;
+}
+.hover-gl [data-hover-fx] .photo-open:hover::after {
+  opacity: 0;
+}
+.hover-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
 /* WebGL water: one canvas over the viewport; the DOM frames underneath stay for layout and clicks. */
 .ripple-canvas {
   position: fixed;
@@ -885,12 +945,19 @@ main:focus {
   max-width: calc(100vw - 2 * var(--gutter));
   overflow: hidden;
   border: 1px solid var(--line);
-  box-shadow: 0 0 80px rgba(224, 50, 43, 0.18);
+  box-shadow: 0 0 80px rgba(242, 69, 58, 0.18);
 }
-.pre-print canvas {
+.pre-print {
+  position: relative;
+}
+.pre-print canvas,
+.pre-photo {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 /* No WebGL: the same negative → positive idea with a CSS filter. */
 .pre-print-css {
@@ -1154,7 +1221,7 @@ main:focus {
   width: min(60vw, 520px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(224, 50, 43, 0.35), transparent 65%);
+  background: radial-gradient(circle, rgba(242, 69, 58, 0.35), transparent 65%);
   filter: blur(20px);
   pointer-events: none;
   animation: safelight 4s ease-in-out infinite alternate;
@@ -1177,4 +1244,9 @@ main:focus {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* Desktop intro: the photo stays hidden until the developing shader takes over. */
+.pre-print-wait .pre-photo {
+  visibility: hidden;
 }

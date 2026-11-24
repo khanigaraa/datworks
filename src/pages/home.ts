@@ -93,7 +93,7 @@ export function homePage(): HTMLElement {
     h(
       'section',
       { class: 'reel', 'aria-label': 'Showreel' },
-      h('div', { class: 'reel-grid' }, ...reelItems),
+      h('div', { class: 'reel-grid', 'data-hover-fx': true }, ...reelItems),
     ),
     h(
       'section',

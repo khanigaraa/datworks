@@ -7,7 +7,10 @@ test('the Grads roll uses real photos: AVIF/WebP sources, lazy, with a blur prev
 
   await expect(first.locator('source[type="image/avif"]')).toHaveAttribute('srcset', /\/photos\/dara-grad-04-640\.avif 640w/);
   await expect(img).toHaveAttribute('srcset', /dara-grad-04-1920\.webp 1920w/);
-  await expect(img).toHaveAttribute('loading', 'lazy');
+  // The first row is likely the largest paint: eager and high priority. The rest load lazily.
+  await expect(img).toHaveAttribute('loading', 'eager');
+  await expect(img).toHaveAttribute('fetchpriority', 'high');
+  await expect(page.locator('.grid .photo img').nth(3)).toHaveAttribute('loading', 'lazy');
   await expect(img).toHaveAccessibleName(/red railing/);
   await expect(first.locator('.photo-frame')).toHaveCSS('background-image', /data:image\/webp/);
 
