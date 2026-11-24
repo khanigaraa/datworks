@@ -1,129 +1,167 @@
-# DARKROOM: a portfolio for datworks
+<h1 align="center">DARKROOM</h1>
 
-> **Originally built in 2025 for datworks · rebuilt in 2026.**
-> A photography portfolio that behaves like a darkroom: photos develop from negative to positive,
-> the safelight glows red under your cursor, and the pool series swims sideways as you scroll.
+<p align="center">
+  <b>Website portofolio fotografi untuk datworks, yang bekerja seperti kamar gelap.</b><br>
+  Foto "dicuci" dari negatif ke positif, lampu merah <i>safelight</i> menyala di bawah kursor, dan seri renang berenang ke samping saat di-scroll.
+</p>
 
-**Live:** [datworks-w9bw.vercel.app](https://datworks-w9bw.vercel.app) · **Stack:** Vite + TypeScript (no UI framework), GSAP, Lenis, OGL (WebGL) · **Tests:** Vitest + Playwright
+<p align="center">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-tanpa_framework-3178C6?logo=typescript&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white">
+  <img alt="Tes: 35 unit dan 61 end-to-end" src="https://img.shields.io/badge/tes-35_unit_·_61_e2e-2EA44F">
+  <img alt="Lisensi: all rights reserved" src="https://img.shields.io/badge/lisensi-all_rights_reserved-lightgrey">
+</p>
 
-![The "developing" intro: the first frame develops from negative to positive](docs/developing.gif)
+<p align="center">
+  <a href="https://datworks-w9bw.vercel.app"><b>Demo live</b></a> ·
+  <a href="#fitur">Fitur</a> ·
+  <a href="#tangkapan-layar">Tangkapan layar</a> ·
+  <a href="#mulai-cepat">Mulai cepat</a> ·
+  <a href="#dokumentasi">Dokumentasi</a> ·
+  <a href="#english-summary">English</a>
+</p>
 
-## The project in one minute
+![Beranda DARKROOM: showreel foto datworks dengan judul besar di atas latar gelap](docs/home.jpg)
 
-**datworks** ([@datwrk](https://www.instagram.com/datwrk/)) is a photography studio from West Java that shoots a little bit of everything ("The King of All Trades"): pre-weddings and weddings, graduations, sport and corporate events, food and products, studio portraits.
+## Tentang
 
-I first built their portfolio site in 2025. The code was never pushed anywhere and was lost, so in 2026 I rebuilt it from scratch, properly this time: specced, ticketed, tested and committed step by step. This repository is that rebuild.
+**datworks** ([@datwrk](https://www.instagram.com/datwrk/)) adalah studio foto dari Jawa Barat yang memotret hampir semua hal ("The King of All Trades"): pre-wedding dan pernikahan, wisuda, olahraga dan acara perusahaan, makanan dan produk, sampai potret studio.
 
-**My role:** everything on the web side. That covers discovery with the client, the concept, design, frontend engineering, the image pipeline, photo curation (114 frames out of ~1,000 originals), accessibility and performance work, testing and deployment. Photography by datworks.
+Website portofolio mereka pertama kali aku buat pada 2025. Kodenya tidak pernah disimpan di GitHub dan akhirnya hilang, jadi pada 2026 aku membangunnya ulang dari nol dengan lebih rapi: ada spec, tiket, tes, dan commit bertahap. Repo ini adalah hasil pembangunan ulang tersebut.
+
+- **Status:** demo portofolio. Situs ini berjalan di Vercel, tapi belum dipasang di domain resmi datworks.
+- **Peranku:** semua sisi web, mulai dari diskusi dengan klien, konsep, desain, frontend, pipeline gambar, kurasi foto (114 dari ±1.000 foto asli), aksesibilitas dan performa, pengujian, sampai deploy. Fotografi oleh datworks.
+- **Yang tidak ada:** tidak ada CMS atau backend. Konten diubah lewat kode di `src/content/`, lalu di-build ulang.
+
+## Fitur
+
+| Bagian | Yang bisa dilihat |
+|---|---|
+| **Preloader "developing"** | Shader WebGL mencuci frame showreel pertama dari negatif film oranye ke foto jadi. HP mendapat versi CSS, dan pengguna *reduced motion* langsung melewatinya. |
+| **Lima roll** | Arsip disusun seperti film: Lover, Grads, Event, Product, Studio. Bisa difilter lewat `/work?roll=…`. |
+| **West Java Aquatics** | Strip horizontal yang di-pin. Foto digambar ulang oleh shader riak air yang bereaksi pada kecepatan scroll dan kursor. |
+| **A Love Story in 4 Chapters** | Daftar bab yang ikut bergerak, dan warna halaman berganti antar bab. |
+| **Silat Bumi Padjadjaran** | Foto miring dan blur mengikuti kecepatan scroll, lalu kembali tajam. |
+| **Dara Grad · ACE Gathering** | Ritme editorial: foto penuh, berpasangan, dan satuan yang digeser. |
+| **Still Life** | Katalog bergaya contact sheet, dikelompokkan per klien. |
+| **Hover darkroom** | Di desktop, satu kanvas WebGL menggambar foto yang sedang di-hover: lensa menggembung ke arah kursor, sedikit pecahan warna, dan cahaya merah. Perangkat sentuh mendapat glow CSS. |
+| **Lightbox** | Memakai `<dialog>` native: tombol panah, swipe, Escape atau klik latar untuk menutup, dan fokus terkunci di dalam. |
+| **Transisi halaman** | Tirai safelight, smooth scroll, dan reveal saat scroll. Semua mati saat `prefers-reduced-motion` aktif. |
+
+## Tangkapan layar
+
+![Intro "developing": frame pertama berubah dari negatif ke positif](docs/developing.gif)
 
 | | |
 |---|---|
-| ![Home](docs/home.jpg) | ![Showreel](docs/showreel.jpg) |
-| ![Work grid with the darkroom hover](docs/work.jpg) | ![West Java Aquatics, pinned horizontal strip](docs/aquatics.jpg) |
-| ![A Love Story in 4 Chapters](docs/love-story.jpg) | ![Lightbox](docs/lightbox.jpg) |
+| ![Showreel di beranda](docs/showreel.jpg) | ![Grid Work dengan efek hover darkroom](docs/work.jpg) |
+| ![West Java Aquatics: strip horizontal yang di-pin](docs/aquatics.jpg) | ![A Love Story in 4 Chapters](docs/love-story.jpg) |
+| ![Lightbox foto](docs/lightbox.jpg) | ![Halaman Work di layar HP](docs/mobile.jpg) |
 
-<p align="center"><img src="docs/mobile.jpg" width="300" alt="The Work page on a phone"></p>
+Semua gambar di atas dibuat otomatis dengan `npm run screenshots`.
 
-## What's inside
+## Alur kerja
 
-- **Five rolls, six series.** The archive is organised like film: rolls (Lover, Grads, Event, Product, Studio) filterable on `/work?roll=…`, plus six series that each get their own layout:
-  - **West Java Aquatics:** a pinned, horizontally scrolling strip; photos are redrawn by a WebGL water-ripple shader that reacts to scroll speed and the cursor.
-  - **A Love Story in 4 Chapters:** a sticky chapter index that follows the reader, with the page tone drifting from chapter to chapter.
-  - **Silat Bumi Padjadjaran:** frames lean and blur with scroll velocity, then snap sharp.
-  - **Dara Grad · ACE Gathering:** an editorial rhythm of full-bleed frames, pairs and offset singles.
-  - **Still Life:** a contact-sheet catalogue grouped by client.
-- **"Developing" preloader.** A fragment shader develops the first showreel frame from an orange film negative to the print under a fading safelight. Phones get the same idea in CSS (`filter: invert()`), and reduced-motion users skip it.
-- **Darkroom hover.** On desktop, one shared WebGL canvas draws only the hovered photo: a lens bulge toward the cursor, a hint of colour fringing and the red safelight. Touch devices get a CSS glow.
-- **Lightbox** on a native `<dialog>`: arrow keys, swipe, Escape/backdrop to close, focus kept inside and returned to the trigger.
-- **Page transitions** (a safelight curtain), smooth scroll and scroll reveals, all off with `prefers-reduced-motion`.
+```mermaid
+flowchart LR
+  A[Diskusi dengan datworks] --> B[Konsep & desain]
+  B --> C[Spec & tiket]
+  C --> D[Kurasi 114 foto]
+  D --> E[Build per tiket<br/>+ tes]
+  E --> F[Deploy Vercel]
+```
 
-## Technical decisions
+## Arsitektur
 
-| Decision | Why |
+Aplikasi satu halaman tanpa framework UI. Router History API kecil (±120 baris) menjalankan hook `leave → unmount → swap → enter`, jadi setiap animasi dibersihkan saat pindah halaman. Data foto dan aturan kurasinya dicek **saat build**, dan efek WebGL hanya jalan di perangkat yang mampu. Detail lengkap ada di [docs/ARSITEKTUR.md](docs/ARSITEKTUR.md) dan [docs/KEPUTUSAN-TEKNIS.md](docs/KEPUTUSAN-TEKNIS.md).
+
+| Lapisan | Teknologi |
 |---|---|
-| **Vanilla TypeScript + a 100-line History API router**, no UI framework | The site is mostly motion and images. A tiny router with `leave → unmount → swap → enter` hooks gives full control over page transitions and cleanup. |
-| **A deep `content` module** (`src/content`) with pure queries and `validate()` | Rolls, series and photos are plain data. Curation rules (10–20 frames per series, 12–16 per roll, ≤ 150 photos, alt text required, no duplicate ids) are enforced at **build time** by a Vite plugin, so invalid content can't ship. |
-| **Consent is part of the data** (`ok` / `anonymize` / `exclude`) | Real people are in these photos. `exclude` is filtered once in the catalog so no query can leak it, and client series use aliases (`A & D`). |
-| **Own image pipeline** (`npm run photos`) | `sharp` (wasm build, because native binaries are blocked by Windows Application Control on the dev machine) turns a curated manifest into AVIF + WebP at 640/960/1280/1920 px, a 20 px blur preview and dimensions. EXIF/GPS are stripped. It is idempotent, so a new width only encodes what's missing. |
-| **One WebGL context per effect**, not per photo | The ripple and hover effects each draw DOM-positioned planes on a single fixed canvas, using the photos' own `<img>` as textures. The DOM stays the source of truth for layout, links and the lightbox. |
-| **WebGL only where it pays off** | Shaders run only with a fine pointer, WebGL, ≥ 4 cores/4 GB and motion allowed. OGL ships in a separate chunk that phones never download. |
-| **CSS reveals + IntersectionObserver** instead of a ScrollTrigger per element | Removed a ~1 s long task on throttled phones. GSAP ScrollTrigger is kept for the pin, parallax and velocity effects where it shines. |
+| Tampilan | TypeScript murni, CSS, router History API buatan sendiri |
+| Gerak | GSAP ScrollTrigger, Lenis |
+| WebGL | OGL (dipisah ke chunk sendiri, tidak diunduh HP) |
+| Gambar | `sharp` → AVIF + WebP (640–1920 px) |
+| Tes | Vitest, Playwright |
+| Hosting | Vercel (statis) |
 
-### Performance and accessibility
+## Mulai cepat
 
-Lighthouse, mobile emulation, median of 3 runs on the production build:
-
-| Page | Performance | Accessibility |
-|---|---|---|
-| Home `/` | 89 | 100 |
-| Work `/work` | 92 | 100 |
-| Series `/series/dara-grad` | 95 | 100 |
-
-The biggest wins:
-- Per-route preload of the LCP image injected into `index.html` at build time (this is a client-rendered app, so the browser would otherwise discover it late).
-- A 960 px rendition for phones.
-- No smooth-scroll loop, parallax or animated grain on touch devices.
-- Splitting OGL out of the main bundle.
-
-Contrast was checked against WCAG AA (the accent red was adjusted to `#f2453a` for 5.36:1).
-
-## Running it
+Butuh **Node.js 18 atau lebih baru** (diuji dengan Node 26).
 
 ```bash
 npm install
-npm run dev            # http://localhost:5173
-npm run build          # type-check, validate content, build to dist/
+npm run dev        # http://localhost:5173
+npm run build      # cek tipe, validasi konten, build ke dist/
 npm run preview
 ```
 
-The processed photos are committed in `public/photos`, so the site runs without the originals. To re-process, put the originals in `originals/` (gitignored) and run `npm run photos`. `scripts/photos.manifest.json` maps photo ids to files.
+Foto hasil olahan sudah ada di `public/photos`, jadi situs bisa langsung jalan tanpa foto asli. Cara mengolah foto baru ada di [docs/PIPELINE-FOTO.md](docs/PIPELINE-FOTO.md).
 
-## Tests
+## Pengujian
 
 ```bash
-npm test               # Vitest: content queries, validation, privacy, pipeline output, pure helpers
-npm run test:e2e       # Playwright against the production build (uses the installed Microsoft Edge)
-BASE_URL=https://datworks-w9bw.vercel.app npm run test:e2e   # the same suite against the live site
+npm test            # 35 unit test (Vitest)
+npm run test:e2e    # 61 tes end-to-end (Playwright, memakai Microsoft Edge)
 ```
 
-- **35 unit tests:** catalog queries, every validation rule, the `exclude` privacy guarantee, the pipeline's files and sizes, and pure helpers (editorial rhythm, swipe and velocity mapping).
-- **57 end-to-end tests** (all passing against the live deployment too): routing and back/forward, filters in the URL, the 404, the menu and focus trap, the lightbox (keyboard, swipe, backdrop), the preloader (first visit, skip, no-WebGL fallback), the pinned strip, chapter tracking, motion blur, hover effects with and without WebGL, reduced motion, no layout shift, and no horizontal overflow at 375 px.
+Tes end-to-end juga bisa dijalankan ke situs live dengan `BASE_URL`. Daftar lengkap yang dites ada di [docs/PENGUJIAN.md](docs/PENGUJIAN.md).
 
-## Project structure
+## Struktur repositori
 
-```
+```text
 src/
-  content/      data, types, catalog (queries + validate), photo metadata
-  pages/        home, work, series (one template, five layouts), about, 404
-  ui/           dom helper, photo/picture, lightbox, menu, pure helpers
-  router.ts     History API router with lifecycle hooks
-  motion.ts     Lenis, page transitions, reveals, pins, velocity effects
-  preloader*.ts the developing intro (WebGL + CSS fallback)
-  ripple.ts     WebGL water for the Aquatics strip
-  hover.ts      WebGL darkroom hover
-scripts/        image pipeline, README screenshots
-e2e/            Playwright specs
+  content/      data, tipe, katalog (query + validate), metadata foto
+  pages/        home, work, series (satu template, lima layout), about, 404
+  ui/           helper DOM, foto, lightbox, menu, helper murni
+  router.ts     router History API dengan hook lifecycle
+  motion.ts     Lenis, transisi halaman, reveal, pin, efek kecepatan
+  preloader*.ts intro "developing" (WebGL + fallback CSS)
+  ripple.ts     air WebGL untuk strip Aquatics
+  hover.ts      hover darkroom WebGL
+scripts/        pipeline gambar dan screenshot README
+e2e/            tes Playwright
+docs/           dokumentasi dan gambar README
 ```
 
-## Credits
+## Privasi dan hak cipta
 
-- **Photography:** © datworks. All rights reserved; the photos are not covered by any code licence and may not be reused.
-- **Design and development:** [khanigaraa](https://github.com/khanigaraa).
-- Fonts: Instrument Serif, Inter, JetBrains Mono (Google Fonts).
+Ada orang sungguhan di foto-foto ini, jadi izin tampil disimpan di dalam data (`ok` / `anonymize` / `exclude`). Foto `exclude` disaring sebelum query apa pun berjalan, nama klien diganti alias, dan metadata EXIF/GPS dibuang. Detail di [docs/KONTEN-DAN-PRIVASI.md](docs/KONTEN-DAN-PRIVASI.md).
+
+Semua foto **© datworks** dan dipajang dengan izin mereka.
+
+## Dokumentasi
+
+| Dokumen | Isi |
+|---|---|
+| [ARSITEKTUR.md](docs/ARSITEKTUR.md) | Router, modul konten, aturan kurasi, efek WebGL, gerak |
+| [KEPUTUSAN-TEKNIS.md](docs/KEPUTUSAN-TEKNIS.md) | Kenapa tanpa framework, kenapa satu konteks WebGL, dan keputusan lain |
+| [PIPELINE-FOTO.md](docs/PIPELINE-FOTO.md) | Mengolah foto asli jadi AVIF/WebP dengan `npm run photos` |
+| [PERFORMA.md](docs/PERFORMA.md) | Skor Lighthouse, perbaikan performa, dan aksesibilitas |
+| [PENGUJIAN.md](docs/PENGUJIAN.md) | Isi 35 unit test dan 61 tes end-to-end |
+| [KONTEN-DAN-PRIVASI.md](docs/KONTEN-DAN-PRIVASI.md) | Status izin per foto dan hak cipta |
+
+## Kredit dan lisensi
+
+- **Fotografi:** © datworks.
+- **Desain dan pengembangan:** [khanigaraa](https://github.com/khanigaraa).
+- **Font:** Instrument Serif, Inter, JetBrains Mono (Google Fonts).
+
+**All rights reserved.** Kode di repo ini dipublikasikan hanya untuk dilihat sebagai portofolio, dan tidak boleh dipakai ulang tanpa izin tertulis. Foto tidak termasuk lisensi apa pun. Lihat [LICENSE](LICENSE).
 
 ---
 
-## Ringkasan (Bahasa Indonesia)
+## English summary
 
-**DARKROOM** adalah website portofolio fotografi untuk **datworks**, studio foto dari Jawa Barat ("The King of All Trades": pre-wedding, wisuda, event, produk, studio). Website ini awalnya aku buat pada 2025, tetapi kodenya tidak pernah disimpan di GitHub dan hilang. Pada 2026 aku membangunnya ulang dari nol dengan lebih rapi: ada spec, tiket, test, dan commit bertahap.
+**DARKROOM** is a photography portfolio for **datworks**, a studio in West Java, Indonesia. I first built it in 2025. That code was lost, so I rebuilt it from scratch in 2026 with a spec, tickets, tests, and step-by-step commits. It is a portfolio demo hosted on Vercel and is not on datworks' own domain.
 
-Sorotan:
-- Preloader WebGL yang "mencuci" foto dari negatif ke positif.
-- Hover cahaya merah darkroom.
-- Galeri renang yang bergerak ke samping dengan efek riak air.
-- Kisah cinta dalam 4 bab.
-- Lightbox yang ramah keyboard.
-- 114 foto hasil kurasi yang diolah ke AVIF/WebP.
-- Lighthouse mobile 89–95 dan aksesibilitas 100.
+Highlights:
+- a WebGL preloader that "develops" a photo from negative to print;
+- a red darkroom hover;
+- a horizontally scrolling swimming series with a water-ripple shader;
+- a keyboard-friendly lightbox;
+- 114 curated photos processed to AVIF/WebP;
+- Lighthouse mobile scores of 89–95 for performance and 100 for accessibility.
 
-Peranku: konsep, desain, frontend, pipeline gambar, kurasi foto, test, dan deploy. Foto © datworks.
+Stack: vanilla TypeScript, Vite, GSAP, Lenis, OGL. Tests: 35 Vitest and 61 Playwright. I handled everything on the web side; the photography is by datworks.
+
+Code: all rights reserved, for portfolio viewing only. Photos © datworks.
