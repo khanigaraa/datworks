@@ -4,7 +4,7 @@
 > A photography portfolio that behaves like a darkroom: photos develop from negative to positive,
 > the safelight glows red under your cursor, and the pool series swims sideways as you scroll.
 
-**Live:** _coming soon on Vercel_ · **Stack:** Vite + TypeScript (no UI framework), GSAP, Lenis, OGL (WebGL) · **Tests:** Vitest + Playwright
+**Live:** [datworks-w9bw.vercel.app](https://datworks-w9bw.vercel.app) · **Stack:** Vite + TypeScript (no UI framework), GSAP, Lenis, OGL (WebGL) · **Tests:** Vitest + Playwright
 
 ![The "developing" intro: the first frame develops from negative to positive](docs/developing.gif)
 
@@ -83,10 +83,11 @@ The processed photos are committed in `public/photos`, so the site runs without 
 ```bash
 npm test               # Vitest: content queries, validation, privacy, pipeline output, pure helpers
 npm run test:e2e       # Playwright against the production build (uses the installed Microsoft Edge)
+BASE_URL=https://datworks-w9bw.vercel.app npm run test:e2e   # the same suite against the live site
 ```
 
 - **35 unit tests:** catalog queries, every validation rule, the `exclude` privacy guarantee, the pipeline's files and sizes, and pure helpers (editorial rhythm, swipe and velocity mapping).
-- **57 end-to-end tests:** routing and back/forward, filters in the URL, the 404, the menu and focus trap, the lightbox (keyboard, swipe, backdrop), the preloader (first visit, skip, no-WebGL fallback), the pinned strip, chapter tracking, motion blur, hover effects with and without WebGL, reduced motion, no layout shift, and no horizontal overflow at 375 px.
+- **57 end-to-end tests** (all passing against the live deployment too): routing and back/forward, filters in the URL, the 404, the menu and focus trap, the lightbox (keyboard, swipe, backdrop), the preloader (first visit, skip, no-WebGL fallback), the pinned strip, chapter tracking, motion blur, hover effects with and without WebGL, reduced motion, no layout shift, and no horizontal overflow at 375 px.
 
 ## Project structure
 
