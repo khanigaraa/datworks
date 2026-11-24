@@ -9,7 +9,7 @@ test.describe('desktop', () => {
     await page.goto(URL);
     const section = page.locator('.layout-horizontal');
     await expect(section).toHaveClass(/is-pinned/);
-    await expect(page.locator('.h-track .photo')).toHaveCount(11);
+    await expect(page.locator('.h-track .photo')).toHaveCount(13);
 
     const x = () =>
       page.locator('.h-track').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
@@ -32,7 +32,7 @@ test.describe('desktop', () => {
 
     // Photos still open in the lightbox through the invisible DOM frames.
     await page.locator('.h-track .photo-open').first().click();
-    await expect(page.locator('.lb-frame')).toHaveText(/^Frame 02\/12/);
+    await expect(page.locator('.lb-frame')).toHaveText(/^Frame 02\/14/); // the cover above the strip is frame 01
     await page.keyboard.press('Escape');
 
     // Leaving the page removes the canvas again.

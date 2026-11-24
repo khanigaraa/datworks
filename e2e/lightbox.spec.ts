@@ -3,9 +3,9 @@ import { expect, test } from '@playwright/test';
 test('gallery photos carry contact-sheet frame labels', async ({ page }) => {
   await page.goto('/work?roll=grads');
   const labels = page.locator('.grid .frame-label');
-  await expect(labels.first()).toContainText('Frame 01/16');
+  await expect(labels.first()).toContainText('Frame 01/15');
   await expect(labels.first()).toContainText('grads');
-  await expect(labels.last()).toContainText('Frame 16/16');
+  await expect(labels.last()).toContainText('Frame 15/15');
 });
 
 test('opens, steps with the arrow keys, closes with Escape and returns focus', async ({ page }) => {
@@ -20,16 +20,16 @@ test('opens, steps with the arrow keys, closes with Escape and returns focus', a
   const dialog = page.getByRole('dialog', { name: 'Photo viewer' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('data-photo', secondId!);
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 02/16 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 02/15 · grads');
   await expect(dialog.getByRole('img')).toHaveAccessibleName(/bouquet of orange and white flowers/);
 
   await page.keyboard.press('ArrowRight');
   await expect(dialog).toHaveAttribute('data-photo', thirdId!);
   await page.keyboard.press('ArrowLeft');
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 01/16 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 01/15 · grads');
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 16/16 · grads');
+  await expect(dialog.locator('.lb-frame')).toHaveText('Frame 15/15 · grads');
 
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();

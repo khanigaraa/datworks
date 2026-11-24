@@ -32,7 +32,7 @@ test('frames keep their size before the image loads (no layout shift)', async ({
       return r.height > 0 && Math.abs(r.width / r.height - expected) < 0.02;
     }),
   );
-  expect(sizes.length).toBe(16);
+  expect(sizes.length).toBe(15);
   expect(sizes.every(Boolean)).toBe(true);
 });
 

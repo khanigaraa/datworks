@@ -1,13 +1,14 @@
 import photoMeta from './photo-meta.json';
-import type { ContentData, Photo, PhotoImage, Roll, RollId, Series } from './types';
+import type { Consent, ContentData, Photo, PhotoImage, Roll, RollId, Series } from './types';
 
 /**
- * Content for the DARKROOM site.
+ * Content for the DARKROOM site: 114 curated photos from the datworks Drive.
  *
- * Real photos come from the image pipeline (`npm run photos` → photo-meta.json). Series that
- * don't have their real photos yet (ticket 11) use dark placeholders generated below; their
- * ids already follow the final naming scheme.
- * Client-facing series stay anonymised (`clientLabel` alias) until datworks confirms consent.
+ * Every photo is processed by the image pipeline (`npm run photos`, driven by
+ * scripts/photos.manifest.json → photo-meta.json). Ids are stable (`aquatics-11`), so the
+ * curation can change without touching the original camera file names.
+ * People-facing series stay anonymised (`clientLabel` alias, `consent: 'anonymize'`) until
+ * datworks confirms consent; no real client names appear anywhere in the data.
  */
 
 type Meta = PhotoImage & { width: number; height: number };
@@ -47,8 +48,8 @@ export const series: Series[] = [
     roll: 'event',
     layout: 'horizontal',
     clientLabel: 'Akuatik Jawa Barat',
-    intro: 'Four seasons poolside: swimming, diving and water polo across West Java championships.',
-    cover: 'aquatics-01',
+    intro: 'Seasons poolside: swimming and diving across West Java championships, from the blocks to the podium.',
+    cover: 'aquatics-11',
   },
   {
     slug: 'love-story',
@@ -58,13 +59,13 @@ export const series: Series[] = [
     layout: 'chapters',
     clientLabel: 'A & D',
     intro: 'One couple, four sessions: from the engagement to the studio, told in order.',
-    cover: 'love-story-01',
+    cover: 'love-story-05',
     chapters: ['Engagement', 'Pre-wedding', 'Wedding', 'Studio'],
     chapterNotes: {
-      Engagement: 'Two families in one room, and a ring that made it official.',
-      'Pre-wedding': 'Golden hour, borrowed time: the two of them before the big day.',
-      Wedding: 'The vows, the noise, the long table, the first dance.',
-      Studio: 'After it all, against a plain blue backdrop: just A & D.',
+      Engagement: 'Two families in one room, a long lunch on the carpet and a lot of laughing.',
+      'Pre-wedding': 'Neon, graffiti and a late train across the city: the two of them before the big day.',
+      Wedding: 'The vows, the jasmine, the confetti and the long table.',
+      Studio: 'After it all, against a plain backdrop: just A & D.',
     },
   },
   {
@@ -80,12 +81,12 @@ export const series: Series[] = [
   {
     slug: 'silat-bumi-padjadjaran',
     title: 'Silat Bumi Padjadjaran',
-    year: '2025',
+    year: '2024',
     roll: 'event',
     layout: 'blur',
-    clientLabel: 'Silat Bumi Padjadjaran',
-    intro: 'Pencak silat in motion: speed, breath and tradition.',
-    cover: 'silat-01',
+    clientLabel: 'Silat Bumi Padjadjaran Championship',
+    intro: 'Around the bouts: the packed stands, the officials and the ceremony of a pencak silat championship.',
+    cover: 'silat-02',
   },
   {
     slug: 'ace-gathering-2025',
@@ -93,8 +94,8 @@ export const series: Series[] = [
     year: '2025',
     roll: 'event',
     layout: 'editorial',
-    clientLabel: 'ACE',
-    intro: 'A corporate gathering documented like a feature, not a headcount.',
+    clientLabel: 'Asosiasi Chief Engineer Jawa Barat',
+    intro: 'A corporate seminar documented like a feature, not a headcount: hands up, booths, music and a dancer.',
     cover: 'ace-01',
   },
   {
@@ -104,45 +105,87 @@ export const series: Series[] = [
     roll: 'product',
     layout: 'catalog',
     clientLabel: 'Dua Dimsum · My Cookies · ITB Gitar Nusantara',
-    intro: 'Dimsum, cookies and handmade guitars, catalogued frame by frame.',
-    cover: 'still-life-01',
+    intro: 'Dimsum, cookies and hand-carved guitars, catalogued frame by frame.',
+    cover: 'still-life-11',
     chapters: ['Dua Dimsum', 'My Cookies', 'ITB Gitar Nusantara'],
   },
 ];
 
-const TONE: Record<RollId, number> = { lover: 350, grads: 38, event: 200, product: 22, studio: 225 };
-
-function placeholder(id: string, roll: RollId, alt: string, i: number, extra: Partial<Photo> = {}): Photo {
-  const portrait = i % 3 !== 1;
-  return {
-    id,
-    roll,
-    alt,
-    width: portrait ? 1600 : 2400,
-    height: portrait ? 2000 : 1600,
-    consent: 'ok',
-    tone: TONE[roll] + ((i * 7) % 20) - 10,
-    ...extra,
-  };
-}
-
 const pad = (n: number) => String(n).padStart(2, '0');
 
-const SERIES_PREFIX: Record<string, string> = {
-  'west-java-aquatics': 'aquatics',
-  'love-story': 'love-story',
-  'dara-grad': 'dara-grad',
-  'silat-bumi-padjadjaran': 'silat',
-  'ace-gathering-2025': 'ace',
-  'still-life': 'still-life',
-};
+/**
+ * Flags per photo: `g` = also in its roll's gallery on /work, `r` = in the Home showreel.
+ * The third element of a series entry is the chapter (or catalog group), when the series has them.
+ */
+type Flags = '' | 'g' | 'r' | 'gr';
+type Entry = [alt: string, flags?: Flags, chapter?: string];
+
+function seriesPhotos(prefix: string, slug: string, roll: RollId, entries: Entry[], consent: Consent = 'ok'): Photo[] {
+  return entries.map(([alt, flags = '', chapter], i) =>
+    real(`${prefix}-${pad(i + 1)}`, roll, alt, {
+      series: slug,
+      chapter,
+      inGallery: flags.includes('g'),
+      showreel: flags.includes('r'),
+      consent,
+    }),
+  );
+}
+
+function galleryPhotos(prefix: string, roll: RollId, entries: [alt: string, flags?: Flags][], consent: Consent = 'ok'): Photo[] {
+  return entries.map(([alt, flags = 'g'], i) =>
+    real(`${prefix}-${pad(i + 1)}`, roll, alt, { inGallery: true, showreel: flags.includes('r'), consent }),
+  );
+}
+
+const aquatics = seriesPhotos('aquatics', 'west-java-aquatics', 'event', [
+  ['A swimmer rests on the lane rope beside starting block number 9'],
+  ['A swimmer adjusts his goggles against a bright, open sky'],
+  ['Black and white: a swimmer stretches her arms wide before the race'],
+  ['A swimmer crouches low on the starting block, ready to dive', 'g'],
+  ['A butterfly swimmer surges out of the water, arms thrown forward', 'g'],
+  ['A freestyle swimmer cuts through a turquoise lane'],
+  ['Seen past a blurred yellow pillar, a swimmer streaks along the lane'],
+  ['A swimmer climbs out of the pool up a steel ladder'],
+  ['A swimmer in a yellow cap sits on the pool edge, catching his breath'],
+  ['Two divers stand on the high platform under a cloud-streaked sky'],
+  ['Two divers fall in perfect sync from the platform against a blue sky', 'gr'],
+  ['A diver stretches out mid-air below the springboard'],
+  ['Black and white: spectators cheer from behind the railings', 'g'],
+  ['An official hangs a medal around a young swimmer’s neck'],
+]);
+
+const E = 'Engagement', P = 'Pre-wedding', W = 'Wedding', S = 'Studio';
+const loveStory = seriesPhotos(
+  'love-story',
+  'love-story',
+  'lover',
+  [
+    ['The couple sit on the carpet with family at the engagement, the bride-to-be laughing', 'g', E],
+    ['Home-cooked dishes laid out on a floral tablecloth for the engagement guests', '', E],
+    ['The bride-to-be in white laughs as she sits on the carpet', '', E],
+    ['Two women from the family lean together on a red sofa, smiling', '', E],
+    ['At night, the couple walk past a graffiti-covered shopfront lit in yellow', 'gr', P],
+    ['The couple sit side by side on a commuter train', '', P],
+    ['Black and white: the couple lean against a wall, her head tilted toward his', '', P],
+    ['In warm wooden light, he stands by a doorway while she sits on the step', '', P],
+    ['At the ceremony, the bride smiles while signing the marriage register beside the groom', 'g', W],
+    ['The bride in a white kebaya and strands of jasmine stands by a garden lamp', '', W],
+    ['Black and white: the newlyweds walk through a shower of confetti', 'g', W],
+    ['The newlyweds sit behind a flower-decked table, smiling side by side', '', W],
+    ['In the studio, the couple lean in close against a plain backdrop', '', S],
+    ['He pulls a playful face behind her while she smiles at the camera', '', S],
+    ['He lifts her into his arms, both of them laughing', 'g', S],
+    ['A close, playful frame: her hand raised, his tongue out', 'g', S],
+  ],
+  'anonymize',
+);
 
 /**
  * Dara Grad, in story order: the details, the portraits on the red stairs, a black-and-white
- * pause, then friends and family. Ids are the original file names ("dara grad-04.jpg").
- * `g` = also in the Grads gallery on /work, `r` = in the Home showreel.
+ * pause, then friends and family. Ids are the original file numbers ("dara grad-04.jpg").
  */
-const DARA: [n: number, alt: string, flags?: 'g' | 'r' | 'gr'][] = [
+const DARA: [n: number, alt: string, flags?: Flags][] = [
   [4, 'A graduate in a black gown and medal leans on a red railing above a green campus lawn, smiling up at the camera', 'gr'],
   [1, 'Hands holding a bouquet of orange and white flowers tied with a white ribbon, a graduation sash in the corner', 'g'],
   [2, 'A hand grips a red university diploma tube against a soft, sunlit background'],
@@ -160,63 +203,112 @@ const DARA: [n: number, alt: string, flags?: 'g' | 'r' | 'gr'][] = [
   [21, 'Her father laughs through an orange life buoy hanging by the pool', 'gr'],
   [22, 'Low angle: her parents stand side by side against a pale sky, holding purple flowers', 'g'],
 ];
-
-/** Dara photos kept for the Grads gallery only (not part of the series story). */
-const DARA_GALLERY: [n: number, alt: string][] = [
-  [8, 'Close portrait of the graduate beside a red railing, the campus lawn soft behind her'],
-  [11, 'A bouquet of white and yellow flowers with a florist’s card tucked in'],
-  [12, 'Friends walk across the lawn with flowers while a graduation cap blurs in the foreground'],
-  [15, 'The graduate and a friend lean over the red railing of a campus balcony'],
-  [17, 'The graduate looks up at her tossed cap against a tall campus building'],
-  [19, 'The graduate poses with her parents under the trees, her father lifting the flowers high'],
-];
-
-const daraId = (n: number) => `dara-grad-${pad(n)}`;
-const daraPhotos: Photo[] = [
-  ...DARA.map(([n, alt, flags = '']) =>
-    real(daraId(n), 'grads', alt, {
-      series: 'dara-grad',
-      inGallery: flags.includes('g'),
-      showreel: flags.includes('r'),
-      consent: 'anonymize',
-    }),
-  ),
-  ...DARA_GALLERY.map(([n, alt]) => real(daraId(n), 'grads', alt, { inGallery: true, consent: 'anonymize' })),
-];
-
-/** Series whose real photos are in; the rest still get placeholders. */
-const REAL_SERIES = new Set(['dara-grad']);
-
-const PHOTOS_PER_SERIES = 12;
-const GALLERY_PICKS_PER_SERIES = 4;
-
-const seriesPhotos: Photo[] = series.filter((s) => !REAL_SERIES.has(s.slug)).flatMap((s) =>
-  Array.from({ length: PHOTOS_PER_SERIES }, (_, k) => {
-    const n = k + 1;
-    const consent = s.slug === 'love-story' ? 'anonymize' : 'ok';
-    return placeholder(`${SERIES_PREFIX[s.slug]}-${pad(n)}`, s.roll, `${s.title}, frame ${n} (placeholder)`, k, {
-      series: s.slug,
-      chapter: s.chapters ? s.chapters[Math.floor(k / (PHOTOS_PER_SERIES / s.chapters.length))] : undefined,
-      inGallery: k < GALLERY_PICKS_PER_SERIES,
-      showreel: k === 0,
-      consent,
-    });
+const dara = DARA.map(([n, alt, flags = '']) =>
+  real(`dara-grad-${pad(n)}`, 'grads', alt, {
+    series: 'dara-grad',
+    inGallery: flags.includes('g'),
+    showreel: flags.includes('r'),
+    consent: 'anonymize',
   }),
 );
 
-const EXTRA_GALLERY: Record<RollId, number> = { lover: 10, grads: 0, event: 2, product: 10, studio: 14 };
+const silat = seriesPhotos('silat', 'silat-bumi-padjadjaran', 'event', [
+  ['The championship hall packed with spectators under a steel roof', 'g'],
+  ['An official in a black vest bearing the championship emblem looks out over the crowd', 'gr'],
+  ['Spectators in the stands follow the match intently'],
+  ['A wide view of the hall: full stands and banners along the walls'],
+  ['A man in an orange-and-black uniform watches from the front row'],
+  ['A spectator raises his hands in front of the stage'],
+  ['Officials present an award on stage beneath the championship banner'],
+  ['A speaker addresses the hall from the podium under the steel roof'],
+  ['Two women in orange and black smile together by the stage', 'g'],
+  ['A woman in a black hijab and team jacket stands in the arena, the crowd soft behind her'],
+  ['Officials gather around a carved traditional instrument on stage'],
+  ['Black and white: an official in a white jacket bows his head'],
+]);
 
-const galleryOnly: Photo[] = rolls.flatMap((r) =>
-  Array.from({ length: EXTRA_GALLERY[r.id] }, (_, k) =>
-    placeholder(`${r.id}-${pad(k + 1)}`, r.id, `${r.title} roll, frame ${k + 1} (placeholder)`, k + 1, {
-      inGallery: true,
-      showreel: k === 0,
-    }),
-  ),
+const ace = seriesPhotos('ace', 'ace-gathering-2025', 'event', [
+  ['A ballroom full of seminar guests raise their hands at once', 'gr'],
+  ['A speaker in a suit presents on stage in front of the seminar backdrop'],
+  ['A guest laughs as he lifts a plate high during the celebration'],
+  ['An exhibitor in a blue cap demonstrates a product at his booth'],
+  ['Black and white: a visitor leans over an exhibition stand'],
+  ['Members of the organising team pose together in matching blue shirts'],
+  ['A traditional dancer performs in front of the seminar banner', 'g'],
+  ['The back of a blue jacket printed with the association’s web address'],
+  ['Guests watch the session from their seats in the ballroom'],
+  ['A band plays for the guests at the evening session', 'g'],
+  ['A participant raises his arms on stage, holding a prize'],
+  ['Three participants give a thumbs-up for the camera'],
+]);
+
+const D = 'Dua Dimsum', C = 'My Cookies', G = 'ITB Gitar Nusantara';
+const stillLife = seriesPhotos('still-life', 'still-life', 'product', [
+  ['Shumai with prawn and nori toppings arranged on a white plate', 'g', D],
+  ['Overhead: a bamboo steamer of shumai topped with nori', 'g', D],
+  ['Four bamboo steamers of assorted dimsum seen from above', 'g', D],
+  ['A foil tray of shumai and tofu dimsum beside a brass lamp', '', D],
+  ['A tray of baked dimsum scattered with sesame seeds', 'g', D],
+  ['Chocolate cookies coated in white sesame on a wooden board', 'g', C],
+  ['A tall stack of chocolate chip cookies beside a glass of milk', 'g', C],
+  ['A branded box of cheese sticks with a cup of tea', '', C],
+  ['Pineapple rolls piled into a pyramid on a white plate', 'g', C],
+  ['Close-up of golden pineapple rolls on a cooling rack', 'g', C],
+  ['Overhead: a guitarist sits in a ring of golden hand-carved guitars and amps', 'r', G],
+  ['Close-up of a yellow axe-shaped bass guitar', 'g', G],
+  ['Fingers on the fretboard of a gold bass, the inlays catching the light', 'g', G],
+  ['Black and white: a ringed hand grips the carved neck of a guitar', 'g', G],
+  ['A musician lifts a gold guitar overhead against a white studio wall', 'g', G],
+]);
+
+const lover = galleryPhotos('lover', 'lover', [
+  ['In a wood-panelled diner booth, she reaches across the table to touch his face'],
+  ['Black and white: two engagement rings rest on dark stones'],
+  ['Close-up of a couple’s hands, rings and watches side by side'],
+  ['A couple in sunglasses laugh together on a street corner'],
+  ['A couple pose in front of an old noodle-shop sign', 'gr'],
+  ['A couple look up beneath a bright orange shop sign'],
+  ['He carries her piggyback past a half-open shutter'],
+  ['Sharing a fried snack, she holds it up between their faces'],
+]);
+
+const grads = galleryPhotos(
+  'grads',
+  'grads',
+  [
+    ['A graduate in glasses and cap smiles between her parents', 'gr'],
+    ['Black and white: her family kiss the graduate on both cheeks'],
+    ['The graduate stands on the stairs holding her diploma folder'],
+    ['Two graduates laugh together, one fixing the other’s gown'],
+    ['Black and white: medals hanging on two graduation gowns'],
+  ],
+  'anonymize',
 );
+
+const event = galleryPhotos('event', 'event', [
+  ['Colour guard members swing orange, flame-printed flags across a green court', 'gr'],
+  ['A colour guard sweeps white flags in a wave across the floor'],
+  ['A marching band forms a wall of white fans on the court'],
+  ['Colour guard members rehearse outdoors with white flags, trees behind them'],
+]);
+
+const studio = galleryPhotos('studio', 'studio', [
+  ['Studio portrait: a young woman in a white tee tilts her head toward the light'],
+  ['Laughing, she runs a hand through her hair in warm studio light', 'gr'],
+  ['Profile portrait in a white blouse against a warm backdrop'],
+  ['Black and white: she smiles, a hand resting in her hair'],
+  ['Seated low, she looks up with a hand in her hair'],
+  ['Shot from above, she leans toward the camera, hands on her knees'],
+  ['High-angle portrait: she sits and looks up into the lens'],
+  ['From above, she smiles up at the camera'],
+  ['She frames her face with both hands, grinning'],
+  ['Behind a veil of red tulle, a woman looks into the camera'],
+  ['Black and white: a woman laughs, an arm wrapped around her shoulder'],
+  ['A woman with long dark hair poses in moody, low-key light'],
+]);
 
 export const contentData: ContentData = {
   rolls,
   series,
-  photos: [...daraPhotos, ...seriesPhotos, ...galleryOnly],
+  photos: [...aquatics, ...loveStory, ...dara, ...silat, ...ace, ...stillLife, ...lover, ...grads, ...event, ...studio],
 };

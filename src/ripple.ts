@@ -10,7 +10,8 @@ const vertex = /* glsl */ `
   uniform vec2 uViewport;  // viewport size in CSS pixels
   varying vec2 vUv;
   void main() {
-    vUv = uv;
+    // Positions are flipped into DOM space (y down), so flip v too: vUv is (0,0) at the frame's top-left.
+    vUv = vec2(uv.x, 1.0 - uv.y);
     vec2 px = uRect.xy + (position.xy + 0.5) * uRect.zw;
     vec2 clip = px / uViewport * 2.0 - 1.0;
     gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
@@ -30,15 +31,14 @@ const fragment = /* glsl */ `
 
   void main() {
     vec2 uv = vUv;
-    // The plane is drawn with uv.y going up; DOM rects go down.
-    vec2 m = vec2(uMouse.x, 1.0 - uMouse.y);
+    vec2 m = uMouse; // already in the frame's top-left-origin space
     float d = distance(uv, m);
     float ring = sin(d * 42.0 - uTime * 6.0) * exp(-d * 5.0) * uHover * 0.014;
     vec2 swell = vec2(sin(uv.y * 16.0 + uTime * 2.4), cos(uv.x * 12.0 + uTime * 1.8)) * uStrength * 0.018;
     uv += swell + normalize(uv - m + 1e-4) * ring;
     vec3 c = texture2D(tMap, clamp(uv, 0.0, 1.0)).rgb;
     float caustic = pow(abs(sin((uv.x + uv.y) * 22.0 + uTime * 1.6 + sin(uv.y * 9.0 + uTime))), 14.0);
-    c += caustic * (0.03 + uStrength * 0.07 + uHover * 0.04) * vec3(0.55, 0.85, 1.0);
+    c += caustic * (0.012 + uStrength * 0.05 + uHover * 0.03) * vec3(0.55, 0.85, 1.0);
     gl_FragColor = vec4(c, 1.0);
   }
 `;

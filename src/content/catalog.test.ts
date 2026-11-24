@@ -104,7 +104,7 @@ describe('validation errors', () => {
   };
 
   it('rejects duplicate ids', () => {
-    expect(problems((d) => d.photos.push({ ...d.photos[0] }))).toMatch(/Duplicate photo id "dara-grad-04"/);
+    expect(problems((d) => d.photos.push({ ...d.photos[0] }))).toMatch(/Duplicate photo id "aquatics-01"/);
   });
 
   it('rejects a chapter note for a chapter that does not exist', () => {
@@ -117,7 +117,7 @@ describe('validation errors', () => {
   });
 
   it('rejects empty alt text', () => {
-    expect(problems((d) => (d.photos[0].alt = '  '))).toMatch(/"dara-grad-04" has empty alt/);
+    expect(problems((d) => (d.photos[0].alt = '  '))).toMatch(/"aquatics-01" has empty alt/);
   });
 
   it('rejects a missing cover', () => {
