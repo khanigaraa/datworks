@@ -39,7 +39,9 @@ const fragment = /* glsl */ `
     uv += swell + normalize(uv - m + 1e-4) * ring;
     vec3 c = texture2D(tMap, clamp(uv, 0.0, 1.0)).rgb;
     float caustic = pow(abs(sin((uv.x + uv.y) * 22.0 + uTime * 1.6 + sin(uv.y * 9.0 + uTime))), 14.0);
-    c += caustic * (0.012 + uStrength * 0.05 + uHover * 0.03) * vec3(0.55, 0.85, 1.0);
+    // Light on the pool floor shows in the darker water, not on bright skies.
+    float shade = 1.0 - dot(c, vec3(0.299, 0.587, 0.114));
+    c += caustic * shade * shade * (0.03 + uStrength * 0.06 + uHover * 0.04) * vec3(0.55, 0.85, 1.0);
     gl_FragColor = vec4(c, 1.0);
   }
 `;

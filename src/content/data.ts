@@ -169,7 +169,7 @@ const loveStory = seriesPhotos(
     ['The couple sit side by side on a commuter train', '', P],
     ['Black and white: the couple lean against a wall, her head tilted toward his', '', P],
     ['In warm wooden light, he stands by a doorway while she sits on the step', '', P],
-    ['At the ceremony, the bride smiles while signing the marriage register beside the groom', 'g', W],
+    ['At the ceremony, the bride signs the marriage register while the groom looks on', 'g', W],
     ['The bride in a white kebaya and strands of jasmine stands by a garden lamp', '', W],
     ['Black and white: the newlyweds walk through a shower of confetti', 'g', W],
     ['The newlyweds sit behind a flower-decked table, smiling side by side', '', W],
